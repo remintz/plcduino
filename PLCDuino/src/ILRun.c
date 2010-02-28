@@ -28,6 +28,29 @@ int valStack[MAX_STACK];
 int opSP = 0;
 int valSP = 0;
 
+void initMem() {
+	int i;
+	for (i = 0; i < MEM_SIZE; i++) {
+		memory[i] = 0;
+	}
+}
+
+void setMemBit(int addr, int bit, int val) {
+	if ((bit < 0) || (bit > 7))
+		doAbort(ERR_ILLEGAL_MEMORY_ADDRESS);
+	if ((addr < 0) || (addr >= MEM_SIZE))
+		doAbort(ERR_ILLEGAL_MEMORY_ADDRESS);
+	modBit(&memory[addr], bit, val);
+}
+
+BOOL getMemBit(int addr, int bit) {
+	if ((bit < 0) || (bit > 7))
+		doAbort(ERR_ILLEGAL_MEMORY_ADDRESS);
+	if ((addr < 0) || (addr >= MEM_SIZE))
+		doAbort(ERR_ILLEGAL_MEMORY_ADDRESS);
+	return getBit(memory[addr], bit);
+}
+
 void setMem(int addr, int val) {
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(ERR_ILLEGAL_MEMORY_ADDRESS);
@@ -43,7 +66,7 @@ int getMem(int addr) {
 void dumpMem() {
 	int i;
 	for (i = 0; i < MEM_SIZE; i++) {
-		printf("MEM[%d] = %d\n", i, memory[i]);
+		printf("MEM[%d] = 0x%04X\n", i, memory[i]);
 	}
 }
 
@@ -95,8 +118,6 @@ void ilRun(Instruction *pInstructions) {
 	int val1;
 	int val2;
 
-	for (i = 0; i < MEM_SIZE; i++)
-		memory[i] = 0;
 	BOOL theEnd = FALSE;
 	BOOL found = FALSE;
 
@@ -105,16 +126,33 @@ void ilRun(Instruction *pInstructions) {
 		found = TRUE;
 		switch (curInstruction.operation) {
 		case IL_LD:
-			valPush(memory[curInstruction.byte]);
+			if (curInstruction.bit == 64) {
+				valPush(getMem(curInstruction.byte));
+			}
+			else {
+				valPush(getMemBit(curInstruction.byte, curInstruction.bit));
+			}
 			break;
 		case IL_ST:
-			memory[curInstruction.byte] = valTop();
+			if (curInstruction.bit == 64) {
+				setMem(curInstruction.byte, valTop());
+			} else {
+				setMemBit(curInstruction.byte, curInstruction.bit, valTop());
+			}
 			break;
 		case IL_SET:
-			memory[curInstruction.byte] = 1;
+			if (curInstruction.bit == 64) {
+				setMem(curInstruction.byte, 1);
+			} else {
+				setMemBit(curInstruction.byte, curInstruction.bit, 1);
+			}
 			break;
 		case IL_RESET:
-			memory[curInstruction.byte] = 0;
+			if (curInstruction.bit == 64) {
+				setMem(curInstruction.byte, 0);
+			} else {
+				setMemBit(curInstruction.byte, curInstruction.bit, 0);
+			}
 			break;
 		case IL_CAL:
 			break;
@@ -131,7 +169,11 @@ void ilRun(Instruction *pInstructions) {
 		}
 		if (!found) {
 			if (curInstruction.modifier == IL_PUSH) {
-				valPush(memory[curInstruction.byte]);
+				if (curInstruction.bit == 64) {
+					valPush(getMem(curInstruction.byte));
+				} else {
+					valPush(getMemBit(curInstruction.byte, curInstruction.bit));
+				}
 				opPush(curInstruction.operation);
 			} else {
 				if (curInstruction.operation == IL_POP) {
@@ -141,7 +183,14 @@ void ilRun(Instruction *pInstructions) {
 				} else {
 					operator = curInstruction.operation;
 					val1 = valPop();
-					val2 = memory[curInstruction.byte];
+					if (curInstruction.bit == 64) {
+						val2 = getMem(curInstruction.byte);
+					} else {
+						val2 = getMemBit(curInstruction.byte, curInstruction.bit);
+					}
+					if (curInstruction.modifier == IL_NEG) {
+						val2 = !val2;
+					}
 				}
 				switch (operator) {
 				case IL_AND:

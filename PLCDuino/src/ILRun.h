@@ -10,6 +10,8 @@
 
 #include "ilcode.h"
 
+void initMem();
+void setMem(int addr, int val);
 void dumpMem();
 void ilRun(Instruction *pInstructions);
 

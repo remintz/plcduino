@@ -126,7 +126,7 @@ int read_char(char * line, int idx)
 	case '|'://vertical line
 		r = CH_OR;
 		break;
-	case '!'://normally clozed
+	case '!'://normally closed
 		r = CH_NOT;
 		break;
 	case '+'://

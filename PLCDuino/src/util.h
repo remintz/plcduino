@@ -16,8 +16,11 @@
 #define MAXSTR	255
 #define MAXBUF	1000
 
-
-
 void doAbort(const char *msg);
+BOOL getBit(BYTE by, int bit);
+BYTE setBit(BYTE *by, int bit);
+BYTE resetBit(BYTE *by, int bit);
+BYTE modBit(BYTE *by, int bit, BOOL value);
+
 
 #endif /* UTIL_H_ */
