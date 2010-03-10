@@ -32,9 +32,14 @@ enum {
 	IL_AND,		 	//AND
 	IL_OR,			//OR
 	IL_XOR,			//XOR
+	IL_ANDN,
+	IL_ORN,
+	IL_XORN,
 	//any operand, only negation
 	IL_LD,			//LD
 	IL_ST,			//ST
+	IL_LDN,			//LDN
+	IL_STN,			//STN
 	//any operand, only push
 	IL_ADD,
 	IL_SUB,
@@ -61,5 +66,57 @@ typedef struct _instruction
 	BYTE bit;
 } Instruction;
 
+const char OPERATORS[LAST_OPERATOR][7] = {
+	// expression operators
+	"AND",
+	"&",
+	"OR",
+	"XOR",
+	"ANDN",
+	"&N",
+	"ORN",
+	"XORN",
+	"ADD",
+	"SUB",
+	"MUL",
+	"DIV",
+	"MOD",
+	"GT",
+	"GE",
+	"EQ",
+	"LT",
+	"NE",
+	"LE",
+	// simple operators
+	"LD",
+	"LDN",
+	"ST",
+	"STN",
+	"NOT",
+	"S",
+	"R",
+	"S1",
+	"R1",
+	"CLK",
+	"CU",
+	"CD",
+	"PV",
+	"IN",
+	"PT",
+	// call operators
+	"CAL",
+	"CALC",
+	"CALCN",
+	// return operators
+	"RET",
+	"RETC",
+	"RETCN",
+	// jump operators
+	"JMP",
+	"JMPC",
+	"JMPCN",
+	// not operator
+	"NOT"
+};
 
 #endif /* ILCODE_H_ */

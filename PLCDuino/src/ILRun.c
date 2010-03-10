@@ -140,6 +140,21 @@ void ilRun(Instruction *pInstructions) {
 				setMemBit(curInstruction.byte, curInstruction.bit, valTop());
 			}
 			break;
+		case IL_LDN:
+			if (curInstruction.bit == 64) {
+				valPush(!getMem(curInstruction.byte));
+			}
+			else {
+				valPush(!getMemBit(curInstruction.byte, curInstruction.bit));
+			}
+			break;
+		case IL_STN:
+			if (curInstruction.bit == 64) {
+				setMem(curInstruction.byte, !valTop());
+			} else {
+				setMemBit(curInstruction.byte, curInstruction.bit, !valTop());
+			}
+			break;
 		case IL_SET:
 			if (curInstruction.bit == 64) {
 				setMem(curInstruction.byte, 1);
@@ -201,6 +216,15 @@ void ilRun(Instruction *pInstructions) {
 					break;
 				case IL_XOR:
 					valPush(val1 ^ val2);
+					break;
+				case IL_ANDN:
+					valPush(val1 & (!val2));
+					break;
+				case IL_ORN:
+					valPush(val1 | (!val2));
+					break;
+				case IL_XORN:
+					valPush(val1 ^ (!val2));
 					break;
 				case IL_ADD:
 					valPush(val1 + val2);

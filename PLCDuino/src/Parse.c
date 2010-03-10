@@ -53,7 +53,7 @@ enum {
 	CH_ERR_BADCHAR = 255
 } CH_CODES;
 
-const char IL_COMMANDS[IL_LAST][4]=
+const char IL_COMMANDS[IL_LAST][5]=
 {
 	//--- same order as IL_OPCODES enum
 	"",
@@ -66,8 +66,13 @@ const char IL_COMMANDS[IL_LAST][4]=
 	"AND",
 	"OR",
 	"XOR",
+	"ANDN",
+	"ORN",
+	"XORN",
 	"LD",
 	"ST",
+	"LDN",
+	"STN",
 	"ADD",
 	"SUB",
 	"MUL",
