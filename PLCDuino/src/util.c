@@ -14,21 +14,21 @@ void doAbort(const char *msg) {
 	exit(EXIT_FAILURE);
 }
 
-BOOL getBit(BYTE by, int bit) {
+int getBit(int by, int bit) {
 	return by >> bit & 0x01;
 }
 
-BYTE setBit(BYTE *by, int bit) {
+int setBit(int *by, int bit) {
 	*by = *by | (0x01 << bit);
 	return *by;
 }
 
-BYTE resetBit(BYTE *by, int bit) {
+int resetBit(int *by, int bit) {
 	*by = *by & !(0x01 << bit);
 	return *by;
 }
 
-BYTE modBit(BYTE *by, int bit, BOOL value) {
+int modBit(int *by, int bit, BOOL value) {
 	if (value) {
 		return setBit(by, bit);
 	} else {

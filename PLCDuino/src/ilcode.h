@@ -66,7 +66,8 @@ typedef struct _instruction
 	BYTE bit;
 } Instruction;
 
-const char OPERATORS[LAST_OPERATOR][7] = {
+#if 0
+const char OPERATORS[70][7] = {
 	// expression operators
 	"AND",
 	"&",
@@ -118,5 +119,6 @@ const char OPERATORS[LAST_OPERATOR][7] = {
 	// not operator
 	"NOT"
 };
+#endif
 
 #endif /* ILCODE_H_ */

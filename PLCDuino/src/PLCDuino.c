@@ -25,7 +25,7 @@ void initProgram() {
 int main(void) {
 	char in[] = "LD %I000/0\nAND( %I000/1\nOR( %I000/2\nAND! %I000/3\n)\n)\nST %O001/0";
 	initMem();
-	setMem(0,0x0D);
+	setMemInt(0,0x0D);
 	ParseIL(in, &program[0]);
 	ilRun(program);
 	dumpMem();
