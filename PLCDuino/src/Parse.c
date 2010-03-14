@@ -102,6 +102,8 @@ int extract_number(char *line, int start)
 	//return number read or error
 }
 
+#if 0
+// este read_char ta mais preparado para ladder e esta desativado veja o outro
 int read_char(char * line, int idx)
 {
 	//read ONE character from line[idx] parse grammatically
@@ -187,6 +189,51 @@ int read_char(char * line, int idx)
 		break;
 	default:
 		r = CH_ERR_BADCHAR;//error
+	}
+	//return value or error
+	return r;
+}
+#endif
+
+int read_char(char * line, int idx)
+{
+	//read ONE character from line[idx] parse grammatically
+	int r = 0;
+	if (idx > strlen(line))
+		return ERROR;
+	if (line[idx]==0
+			|| line[idx]==';'
+				|| line[idx]=='\n'
+					|| line[idx]=='\r')
+		return CH_END;
+	if (line[idx]==' '
+		|| line[idx]=='.'
+			|| line[idx]=='#'
+				|| line[idx]=='\t' )
+		return CH_BLANK;
+	if (isdigit(line[idx]))
+		return line[idx] - '0';
+	switch (line[idx])
+	{
+	case 'I':
+	case 'Q':
+	case 'M':
+	case 'N':
+	case 'O':
+	case 'P':
+	case 'C':
+	case 'D':
+	case 'E':
+	case 'T':
+	case 'U':
+	case 'S':
+	case 'R':
+	case 'X':
+		r = line[idx];
+		break;
+	default:
+		r = CH_ERR_BADCHAR;//error
+		break;
 	}
 	//return value or error
 	return r;
