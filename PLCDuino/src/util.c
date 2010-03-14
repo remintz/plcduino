@@ -14,21 +14,25 @@ void doAbort(const char *msg) {
 	exit(EXIT_FAILURE);
 }
 
-int getBit(int by, int bit) {
+WORD getBit(int by, int bit) {
 	return by >> bit & 0x01;
 }
 
-int setBit(int *by, int bit) {
+WORD setBit(WORD *by, int bit) {
 	*by = *by | (0x01 << bit);
 	return *by;
 }
 
-int resetBit(int *by, int bit) {
-	*by = *by & !(0x01 << bit);
+WORD resetBit(WORD *by, int bit) {
+
+	WORD mask;
+
+	mask = ~(0x01 << bit);
+	*by = *by & mask;
 	return *by;
 }
 
-int modBit(int *by, int bit, BOOL value) {
+WORD modBit(WORD *by, int bit, BOOL value) {
 	if (value) {
 		return setBit(by, bit);
 	} else {

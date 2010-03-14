@@ -13,6 +13,6 @@
 void initMem();
 void setMemInt(int addr, int val);
 void dumpMem();
-void ilRun(Instruction *pInstructions);
+void ilRunForever(Instruction *pInstructions);
 
 #endif /* ILRUN_H_ */
