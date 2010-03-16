@@ -14,7 +14,7 @@
 #define MEM_OFFSET_RS_IN		64
 #define MEM_OFFSET_SR_IN		65
 #define MEM_OFFSET_TP_IN		66
-#define MEM_OFFSET_TON_IN		0
+#define MEM_OFFSET_TON_IN		74
 #define MEM_OFFSET_TOF_IN		0
 #define MEM_OFFSET_CTU_IN		0
 #define MEM_OFFSET_CTD_IN		0
@@ -25,7 +25,7 @@
 #define MEM_OFFSET_RS_OUT		158
 #define MEM_OFFSET_SR_OUT		159
 #define MEM_OFFSET_TP_OUT		0
-#define MEM_OFFSET_TON_OUT		0
+#define MEM_OFFSET_TON_OUT		198
 #define MEM_OFFSET_TOF_OUT		0
 #define MEM_OFFSET_CTU_OUT		0
 #define MEM_OFFSET_CTD_OUT		0

@@ -8,7 +8,8 @@
 #ifndef FUNCTIONBLOCKS_H_
 #define FUNCTIONBLOCKS_H_
 
-void SRTick(WORD *p_in, WORD *p_out);
-void RSTick(WORD *p_in, WORD *p_out);
+void SRScan(WORD *p_in, WORD *p_out);
+void RSScan(WORD *p_in, WORD *p_out);
+void TONScan(WORD *p_in, WORD *p_out);
 
 #endif /* FUNCTIONBLOCKS_H_ */

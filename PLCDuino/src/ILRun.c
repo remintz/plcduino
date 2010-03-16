@@ -157,13 +157,15 @@ void ilRunForever(Instruction *pInstructions) {
 			//--- abort instruction executed
 			break;
 		}
-		//dumpMem(0,8);
-		//dumpMem(126,132);
+		dumpMem(0,1);
+		dumpMem(74,83);
+		dumpMem(198,207);
 		if (ctrlAbort()) {
 			break;
 		}
-		SRTick((WORD *)getPMem(MEM_OFFSET_SR_IN), (WORD *)getPMem(MEM_OFFSET_SR_OUT));
-		RSTick((WORD *)getPMem(MEM_OFFSET_RS_IN), (WORD *)getPMem(MEM_OFFSET_RS_OUT));
+		TONScan((WORD *)getPMem(MEM_OFFSET_TON_IN), (WORD *)getPMem(MEM_OFFSET_TON_OUT));
+		SRScan((WORD *)getPMem(MEM_OFFSET_SR_IN), (WORD *)getPMem(MEM_OFFSET_SR_OUT));
+		RSScan((WORD *)getPMem(MEM_OFFSET_RS_IN), (WORD *)getPMem(MEM_OFFSET_RS_OUT));
 		writeOutputs(getPMem(MEM_OFFSET_OUT));
 	}
 }
