@@ -17,7 +17,6 @@
 #define MAXSTR	255
 #define MAXBUF	1000
 
-void doAbort(const char *msg);
 WORD getBit(int by, int bit);
 WORD setBit(WORD *by, int bit);
 WORD resetBit(WORD *by, int bit);

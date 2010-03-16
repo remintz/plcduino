@@ -10,6 +10,7 @@
 #include <ctype.h>
 #include "util.h"
 #include "ilcode.h"
+#include "ErrMsg.h"
 //#include "ILRun.h"
 
 #define ERROR 		-1
@@ -18,7 +19,6 @@
 #define ERR_BADOPERAND	-4
 #define ERR_BADINDEX	-5
 #define ERR_BADCOIL	-6
-#define ERR_BADOPERATOR	-7
 #define ERR_BADOPERATOR	-7
 
 //--- Ladder character codes
@@ -395,14 +395,32 @@ int parse_il_line(char *line, Instruction *op)
 
 void ParseIL(char *in, Instruction *program_ptr) {
 	char line[80];
-	int i;
+	int i, parseResult;
 	int pc = 0;
 	i = strcspn(in, "\n");
 	while (i > 0)
 	{
 		strncpy(line, in, i);
 		line[i] = 0;
-		parse_il_line(line, (program_ptr + pc));
+		parseResult = parse_il_line(line, (program_ptr + pc));
+		if (parseResult != 0) {
+			switch (parseResult) {
+			case ERROR:
+				doAbort(MSG_PARSE_ERROR);
+			case ERR_BADCHAR:
+				doAbort(MSG_PARSE_ERR_BADCHAR);
+			case ERR_BADFILE:
+				doAbort(MSG_PARSE_ERR_BADFILE);
+			case ERR_BADOPERAND:
+				doAbort(MSG_PARSE_ERR_BADOPERAND);
+			case ERR_BADINDEX:
+				doAbort(MSG_PARSE_ERR_BADINDEX);
+			case ERR_BADCOIL:
+				doAbort(MSG_PARSE_ERR_BADCOIL);
+			case ERR_BADOPERATOR:
+				doAbort(MSG_PARSE_ERR_BADOPERATOR);
+			}
+		}
 		pc++;
 		in = in + i;
 		if (in[0] == '\n')

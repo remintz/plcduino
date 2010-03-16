@@ -5,14 +5,7 @@
  *      Author: Renato
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "util.h"
-
-void doAbort(const char *msg) {
-	printf("ABORT:%s/n", msg);
-	exit(EXIT_FAILURE);
-}
 
 WORD getBit(int by, int bit) {
 	return by >> bit & 0x01;
