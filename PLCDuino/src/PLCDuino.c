@@ -38,12 +38,16 @@ int main(void) {
 		"ST %S000/0\n"
 		"LD %I000/1\n"
 		"ST %S000/1\n"
+		"LD %I000/2\n"
+		"ST %O000/0\n"
+		"LD %M000\n"
+		"ST %S001\n"
 		"LD %S000/0\n"
 		"ST %Q000/0\n"
 		"LD %I000/7\n"
 		"ST %X000/0";
 	initMem();
-	setMemInt(0,0x0D);
+	setMemInt(0,20);
 #endif
 	ParseIL(in, &program[0]);
 	ilRunForever(program);

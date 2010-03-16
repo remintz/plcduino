@@ -1,7 +1,7 @@
 /*
  * FunctionBlocks.c
  *
- *  As funcoes *tick são chamadas a cada loop
+ *  As funcoes *Scan são chamadas a cada loop
  *  Os parametros correspondem a pointers para o endereço inicial dos blocos de memória
  *  de entrada e saída.
  *
@@ -10,9 +10,10 @@
  */
 
 #include <string.h>
+#include <time.h>
 #include "util.h"
 
-void SRTick(WORD *p_in, WORD *p_out) {
+void SRScan(WORD *p_in, WORD *p_out) {
 	WORD in, out, newOut;
 	BOOL s1, r, q1;
 	int i;
@@ -40,7 +41,7 @@ void SRTick(WORD *p_in, WORD *p_out) {
 	memcpy(p_out, &newOut, sizeof(WORD));
 }
 
-void RSTick(WORD *p_in, WORD *p_out) {
+void RSScan(WORD *p_in, WORD *p_out) {
 	WORD in, out, newOut;
 	BOOL s, r1, q1;
 	int i;
@@ -67,3 +68,38 @@ void RSTick(WORD *p_in, WORD *p_out) {
 	}
 	memcpy(p_out, &newOut, sizeof(WORD));
 }
+
+void TONScan(WORD *p_in, WORD *p_out) {
+	WORD in, newQ;
+	WORD mask;
+	BOOL tonQ;
+	WORD tonPT, tonET;
+	int i;
+	clock_t time;
+
+	memcpy(&in, p_in, sizeof(WORD));
+	memcpy(&newQ, p_out, sizeof(WORD));
+	mask = 0x01;
+	for (i = 0; i < 4; i++) {
+		memcpy(&tonET, p_out + 2 + (i * 2), sizeof(WORD));
+		memcpy(&tonPT, p_in + 2 + (i * 2), sizeof(WORD));
+		tonQ = 0;
+		if (in & 0x01) {
+			if (tonET < tonPT) {
+				tonET += time;
+				if (tonET > tonPT) {
+					tonET = tonPT;
+				}
+			}
+			else {
+				tonQ = 1;
+			}
+		}
+		newQ = (newQ & ~mask) | (tonQ << i);
+		memcpy(p_out + 2 + (i * 2), &tonET, sizeof(WORD));
+		in = in >> 1;
+		mask = mask << 1;
+	}
+	memcpy(p_out, &newQ, sizeof(WORD));
+}
+
