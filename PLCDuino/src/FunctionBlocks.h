@@ -10,6 +10,6 @@
 
 void SRScan(WORD *p_in, WORD *p_out);
 void RSScan(WORD *p_in, WORD *p_out);
-void TONScan(WORD *p_in, WORD *p_out);
+void TONScan(WORD *p_in, WORD *p_out, int p_DeltaTime);
 
 #endif /* FUNCTIONBLOCKS_H_ */

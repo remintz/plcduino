@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "util.h"
 #include "ilcode.h"
@@ -151,6 +152,9 @@ BOOL ctrlAbort() {
 
 void ilRunForever(Instruction *pInstructions) {
 	BOOL theEnd = FALSE;
+	time_t newTime, lastTime;
+	int deltaTime;
+	time(&lastTime);
 	while (!theEnd) {
 		readInputs(getPMem(MEM_OFFSET_IN));
 		if (ilRun(pInstructions)) {
@@ -163,7 +167,10 @@ void ilRunForever(Instruction *pInstructions) {
 		if (ctrlAbort()) {
 			break;
 		}
-		TONScan((WORD *)getPMem(MEM_OFFSET_TON_IN), (WORD *)getPMem(MEM_OFFSET_TON_OUT));
+		time(&newTime);
+		deltaTime = (int)difftime(newTime, lastTime);
+		lastTime = newTime;
+		TONScan((WORD *)getPMem(MEM_OFFSET_TON_IN), (WORD *)getPMem(MEM_OFFSET_TON_OUT), deltaTime);
 		SRScan((WORD *)getPMem(MEM_OFFSET_SR_IN), (WORD *)getPMem(MEM_OFFSET_SR_OUT));
 		RSScan((WORD *)getPMem(MEM_OFFSET_RS_IN), (WORD *)getPMem(MEM_OFFSET_RS_OUT));
 		writeOutputs(getPMem(MEM_OFFSET_OUT));
