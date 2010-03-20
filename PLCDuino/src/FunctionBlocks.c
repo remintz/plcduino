@@ -69,13 +69,12 @@ void RSScan(WORD *p_in, WORD *p_out) {
 	memcpy(p_out, &newOut, sizeof(WORD));
 }
 
-void TONScan(WORD *p_in, WORD *p_out) {
+void TONScan(WORD *p_in, WORD *p_out, int p_DeltaTime) {
 	WORD in, newQ;
 	WORD mask;
 	BOOL tonQ;
 	WORD tonPT, tonET;
 	int i;
-	clock_t time;
 
 	memcpy(&in, p_in, sizeof(WORD));
 	memcpy(&newQ, p_out, sizeof(WORD));
@@ -86,12 +85,12 @@ void TONScan(WORD *p_in, WORD *p_out) {
 		tonQ = 0;
 		if (in & 0x01) {
 			if (tonET < tonPT) {
-				tonET += time;
+				tonET += p_DeltaTime;
 				if (tonET > tonPT) {
 					tonET = tonPT;
 				}
 			}
-			else {
+			if (tonET >= tonPT) {
 				tonQ = 1;
 			}
 		}

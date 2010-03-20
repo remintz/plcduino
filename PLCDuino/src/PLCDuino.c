@@ -34,18 +34,16 @@ int main(void) {
 #endif
 #if 1
 	char in[] =
-		"LD %I000/0\n"
-		"ST %S000/0\n"
+		"LD %I000/0\n" //
+		"ST %S000/0\n" // SR.0.S1 = IN.0.0
 		"LD %I000/1\n"
-		"ST %S000/1\n"
+		"ST %S000/1\n" // SR.0.R = IN.0.1
 		"LD %I000/2\n"
-		"ST %O000/0\n"
+		"ST %O000/0\n" // TON.0.IN = IN.0.2
 		"LD %M000\n"
-		"ST %S001\n"
-		"LD %S000/0\n"
-		"ST %Q000/0\n"
+		"ST %O002\n"   // TON.0.PT = MEM.0
 		"LD %I000/7\n"
-		"ST %X000/0";
+		"ST %X000/0";  // CONTROL.0.0 = IN.0.7
 	initMem();
 	setMemInt(0,20);
 #endif
