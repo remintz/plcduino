@@ -191,10 +191,11 @@ BOOL ilRun(Instruction *pInstructions) {
 	return abort;
 }
 
+#endif
+
 BOOL ctrlAbort() {
 	return (getMemBit(MEM_OFFSET_CONTROL, 0));
 }
-#endif
 
 void ilRunForever(Instruction *pInstructions) {
 	BOOL theEnd = FALSE;
@@ -213,9 +214,6 @@ void ilRunForever(Instruction *pInstructions) {
 		dumpMem(0,1);
 		dumpMem(74,83);
 		dumpMem(198,207);
-		if (ctrlAbort()) {
-			break;
-		}
 		time(&newTime);
 		deltaTime = (int)difftime(newTime, lastTime);
 		lastTime = newTime;
@@ -229,6 +227,9 @@ void ilRunForever(Instruction *pInstructions) {
 //		Serial.print(oBit);
 //		Serial.print("\n\r");
 		setMemBit(MEM_OFFSET_OUT, 13, oBit);
+		if (ctrlAbort()) {
+			break;
+		}
 		writeOutputs(getPMem(MEM_OFFSET_OUT));
 	}
 }
