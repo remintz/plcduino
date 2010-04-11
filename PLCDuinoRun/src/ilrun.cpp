@@ -1,7 +1,9 @@
-#ifndef ARDUINO
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#ifdef ARDUINO
+	#include <Wprogram.h>
+#else
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <time.h>
 #endif
 
 #include "util.h"
@@ -201,7 +203,7 @@ void ilRunForever(Instruction *pInstructions) {
 //	time(&lastTime);
 	initMem();
 	while (!theEnd) {
-		kickWDT();
+		//kickWDT();
 		readInputs(getPMem(MEM_OFFSET_IN));
 #if 0
 		if (ilRun(pInstructions)) {
@@ -220,8 +222,14 @@ void ilRunForever(Instruction *pInstructions) {
 		TONScan((WORD *)getPMem(MEM_OFFSET_TON_IN), (WORD *)getPMem(MEM_OFFSET_TON_OUT), deltaTime);
 		SRScan((WORD *)getPMem(MEM_OFFSET_SR_IN), (WORD *)getPMem(MEM_OFFSET_SR_OUT));
 		RSScan((WORD *)getPMem(MEM_OFFSET_RS_IN), (WORD *)getPMem(MEM_OFFSET_RS_OUT));
-		writeOutputs(getPMem(MEM_OFFSET_OUT));
 #endif
+		int oBit;
+		oBit = getMemBit(MEM_OFFSET_IN, 2);
+//		Serial.print("oBit=");
+//		Serial.print(oBit);
+//		Serial.print("\n\r");
+		setMemBit(MEM_OFFSET_OUT, 13, oBit);
+		writeOutputs(getPMem(MEM_OFFSET_OUT));
 	}
 }
 

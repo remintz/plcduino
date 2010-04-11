@@ -10,13 +10,14 @@
 #endif
 #include "util.h"
 
-#define WDT_LED_CICLE	20
+#define WDT_LED_CICLE	2000
 int wdtLed;
 WORD lastInput;
+WORD lastOutput;
 
 void initHw() {
 	#ifdef ARDUINO
-		Serial.print("initHw\n");
+		Serial.print("initHw\r\n");
 		WORD ioMask;
 		WORD ioConfig;
 		ioMask = getIOMask();
@@ -41,7 +42,7 @@ void initHw() {
 }
 void kickWDT() {
 	#ifdef ARDUINO
-		Serial.print(".\b");
+		//Serial.print(".\r");
 		if (wdtLed > 0) {
 			digitalWrite(LEDPIN, HIGH);
 		}
@@ -57,25 +58,40 @@ void kickWDT() {
 
 void readInputs(WORD *p_Memory) {
 #ifdef ARDUINO
+//	Serial.print("readInputs\r\n");
 	WORD in;
 	WORD ioMask;
 	WORD ioConfig;
+	WORD onMask;
 	int i;
 
 	in = 0;
+	onMask = 0x01;
 	ioMask = getIOMask();
 	ioConfig = getIOConfig();
-//	for (i = 15; i >= 0; i--) {
-//		if ((ioMask & 0x80) && (ioConfig & 0x80)) {
-//			in = (in << 1) | (digitalRead(i) & 0x01);
-//		}
-//		ioMask = ioMask << 1;
-//		ioConfig = ioConfig << 1;
-//	}
+//	Serial.print("ioConfig: ");
+//	Serial.print(ioConfig);
+//	Serial.print(" ioMask: ");
+//	Serial.print(ioMask);
+//	Serial.print("\r\n");
+	for (i = 0; i < 16; i++) {
+		if ((ioMask & ioConfig & 0x01) == 1) {
+//			Serial.print("Leu ");
+//			Serial.print(i);
+//			Serial.print('\r\n');
+			if ((digitalRead(i) & 0x01) == 1) {
+				in = in | onMask;
+			}
+		}
+		onMask = onMask << 1;
+		ioMask = ioMask >> 1;
+		ioConfig = ioConfig >> 1;
+	}
 	memcpy(p_Memory, &in, sizeof(WORD));
 	if (in != lastInput) {
+		Serial.print("In:");
 		Serial.print(in);
-		Serial.print('\n');
+		Serial.print("\r\n");
 		lastInput = in;
 	}
 #else
@@ -83,19 +99,47 @@ void readInputs(WORD *p_Memory) {
 	printf("<");
 	fflush(stdout);
 	scanf("%d", &c);
-	printf("Lido: 0x%08X\n",c);
+	printf("Lido: 0x%08X\r\n",c);
 	fflush(stdout);
 	p_Memory[0] = c;
 #endif
 }
 
 void writeOutputs(WORD *p_Memory) {
-#ifndef ARDUINO
+#ifdef ARDUINO
+//	Serial.print("writeOutputs\r\n");
+	WORD out;
+	WORD ioMask;
+	WORD ioConfig;
+	int i;
+
+	memcpy(&out, p_Memory, sizeof(WORD));
+	if (out != lastOutput) {
+		Serial.print("out=");
+		Serial.print(out);
+		Serial.print('\r\n');
+		lastOutput = out;
+	}
+	ioMask = getIOMask();
+	ioConfig = ~getIOConfig();
+	for (i = 0; i < 16; i++) {
+		if ((ioMask & ioConfig & 0x01) == 1) {
+			if ((out & 0x01) == 1) {
+				digitalWrite(i, HIGH);
+			} else {
+				digitalWrite(i, LOW);
+			}
+		}
+		ioMask = ioMask >> 1;
+		ioConfig = ioConfig >> 1;
+		out = out >> 1;
+	}
+#else
 	int i;
 	printf("> ");
 	for (i = 0; i < 8; i++)
 		printf(" 0x%04X", p_Memory[i]);
-	printf("\n");
+	printf("\r\n");
 	fflush(stdout);
 #endif
 }
