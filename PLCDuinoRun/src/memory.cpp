@@ -13,7 +13,6 @@
 #include "errmsg.h"
 
 #define	MAX_STACK				10
-#define	MEM_SIZE				10
 
 WORD memory[MEM_SIZE];
 WORD opStack[MAX_STACK];
@@ -84,12 +83,12 @@ void setMem(unsigned char operand, int addr, int bit, WORD val) {
 	case 'P':
 		offset = MEM_OFFSET_TOF_IN;
 		break;
-	case 'C':
-		offset = MEM_OFFSET_CTU_IN;
-		break;
-	case 'D':
-		offset = MEM_OFFSET_CTD_IN;
-		break;
+//	case 'C':
+//		offset = MEM_OFFSET_CTU_IN;
+//		break;
+//	case 'D':
+//		offset = MEM_OFFSET_CTD_IN;
+//		break;
 	case 'E':
 		offset = MEM_OFFSET_CTUD_IN;
 		break;
@@ -136,12 +135,12 @@ WORD getMem(unsigned char operand, int addr, int bit) {
 	case 'P':
 		offset = MEM_OFFSET_TOF_OUT;
 		break;
-	case 'C':
-		offset = MEM_OFFSET_CTU_OUT;
-		break;
-	case 'D':
-		offset = MEM_OFFSET_CTD_OUT;
-		break;
+//	case 'C':
+//		offset = MEM_OFFSET_CTU_OUT;
+//		break;
+//	case 'D':
+//		offset = MEM_OFFSET_CTD_OUT;
+//		break;
 	case 'E':
 		offset = MEM_OFFSET_CTUD_OUT;
 		break;

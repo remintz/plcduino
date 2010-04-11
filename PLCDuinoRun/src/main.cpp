@@ -25,6 +25,12 @@ int main(void) {
 	//--- inicializando biblioteca do Arduino
 	init();
 	Serial.begin(9600);
+	//--- modo de programação
+	Serial.println("PLCDuino");
+	Serial.print("#");
+
+
+	//--- modo execucao
 	initHw();
 	ilRunForever(&program[0]);
 }
