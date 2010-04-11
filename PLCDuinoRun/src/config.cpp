@@ -4,7 +4,7 @@
 //--- bit 0 - output
 
 //const WORD ioMask =   0b0011111111111100;
-const WORD ioMask =   0b0010000000000000;
+const WORD ioMask =   0b0010000000000100;
 const WORD ioConfig = 0b0000000001111100;
 
 const WORD getIOConfig(void) {

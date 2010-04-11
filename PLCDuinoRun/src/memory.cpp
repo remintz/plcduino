@@ -34,7 +34,7 @@ void initStack() {
 
 }
 void setMemBit(int addr, int bit, WORD val) {
-	if ((bit < 0) || (bit > 7))
+	if ((bit < 0) || (bit > 15))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
@@ -46,7 +46,7 @@ WORD *getPMem(int addr) {
 }
 
 WORD getMemBit(int addr, int bit) {
-	if ((bit < 0) || (bit > 7))
+	if ((bit < 0) || (bit > 15))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
