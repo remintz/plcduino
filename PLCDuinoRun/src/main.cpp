@@ -9,10 +9,7 @@
 #include "ilcode.h"
 #include "ilrun.h"
 #include "hw.h"
-
-#define PROG_SIZE	30
-static Instruction program[PROG_SIZE];
-
+#include "pgmmode.h"
 
 //--- resolver referencia indefinida da biblioteca do Arduino
 extern "C" void __cxa_pure_virtual(void) {
@@ -25,12 +22,14 @@ int main(void) {
 	//--- inicializando biblioteca do Arduino
 	init();
 	Serial.begin(9600);
+
 	//--- modo de programação
-	Serial.println("PLCDuino");
-	Serial.print("#");
-
-
+	Serial.println();
+	Serial.println("PLCDuino PGM Mode");
+	programMode();
 	//--- modo execucao
+	Serial.println();
+	Serial.println("EXEC Mode");
 	initHw();
-	ilRunForever(&program[0]);
+	ilRunForever();
 }
