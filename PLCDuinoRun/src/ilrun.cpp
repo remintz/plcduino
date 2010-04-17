@@ -1,14 +1,15 @@
+#include "util.h"
+#include "ilcode.h"
 #ifdef ARDUINO
 	#include <Wprogram.h>
+	#include "nvmem.h"
 #else
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <time.h>
 #endif
 
-#include "util.h"
 #include "memory.h"
-#include "ilcode.h"
 #include "hw.h"
 //#include "FunctionBlocks.h"
 #include "errmsg.h"
@@ -60,8 +61,7 @@ enum _IL_OPCODES {
 	IL_LAST			// last OP... flag
 } IL_OPCODES;
 
-#if 0
-BOOL ilRun(Instruction *pInstructions) {
+BOOL ilRun() {
 	unsigned int iCurInstruction = 0;
 	Instruction curInstruction;
 	WORD operat;
@@ -76,7 +76,7 @@ BOOL ilRun(Instruction *pInstructions) {
 	initStack();
 
 	while (!theEnd) {
-		curInstruction = pInstructions[iCurInstruction];
+		getInstruction(iCurInstruction, &curInstruction);
 		found = TRUE;
 		switch (curInstruction.operation) {
 		case IL_LD:
@@ -191,13 +191,11 @@ BOOL ilRun(Instruction *pInstructions) {
 	return abort;
 }
 
-#endif
-
 BOOL ctrlAbort() {
 	return (getMemBit(MEM_OFFSET_CONTROL, 0));
 }
 
-void ilRunForever(Instruction *pInstructions) {
+void ilRunForever() {
 	BOOL theEnd = FALSE;
 //	time_t newTime, lastTime;
 //	int deltaTime;
@@ -206,11 +204,11 @@ void ilRunForever(Instruction *pInstructions) {
 	while (!theEnd) {
 		//kickWDT();
 		readInputs(getPMem(MEM_OFFSET_IN));
-#if 0
-		if (ilRun(pInstructions)) {
+		if (ilRun()) {
 			//--- abort instruction executed
 			break;
 		}
+#if 0
 		dumpMem(0,1);
 		dumpMem(74,83);
 		dumpMem(198,207);
@@ -221,12 +219,12 @@ void ilRunForever(Instruction *pInstructions) {
 		SRScan((WORD *)getPMem(MEM_OFFSET_SR_IN), (WORD *)getPMem(MEM_OFFSET_SR_OUT));
 		RSScan((WORD *)getPMem(MEM_OFFSET_RS_IN), (WORD *)getPMem(MEM_OFFSET_RS_OUT));
 #endif
-		int oBit;
-		oBit = getMemBit(MEM_OFFSET_IN, 2);
+//		int oBit;
+//		oBit = getMemBit(MEM_OFFSET_IN, 2);
 //		Serial.print("oBit=");
 //		Serial.print(oBit);
 //		Serial.print("\n\r");
-		setMemBit(MEM_OFFSET_OUT, 13, oBit);
+//		setMemBit(MEM_OFFSET_OUT, 13, oBit);
 		if (ctrlAbort()) {
 			break;
 		}
