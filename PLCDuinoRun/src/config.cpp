@@ -1,4 +1,5 @@
 #include "util.h"
+#include "nvmem.h"
 
 //--- bit 1 - input
 //--- bit 0 - output
@@ -11,6 +12,14 @@ const WORD getIOConfig(void) {
 	return ioConfig;
 }
 
+void setIOConfig(WORD value) {
+
+}
+
 const WORD getIOMask(void) {
 	return ioMask;
+}
+
+void setIOMask(WORD value) {
+
 }

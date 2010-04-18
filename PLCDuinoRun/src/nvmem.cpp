@@ -2,26 +2,11 @@
 #include "ilcode.h"
 #include "util.h"
 
-#define	INITIAL_PROGRAM_ADDRESS	0
-#define	MAX_PROGRAM_SIZE		100
+#define ADDR_IOMASK		0
+#define ADDR_IOCONFIG	2
+#define	ADDR_PROGRAM	10
 
-void setInstruction(WORD addr, Instruction instr) {
-	WORD memAddr = (addr * sizeof(Instruction)) + INITIAL_PROGRAM_ADDRESS;
-	EEPROM.write(memAddr, instr.operation);
-	EEPROM.write(memAddr+1, instr.operand);
-	EEPROM.write(memAddr+2, instr.modifier);
-	EEPROM.write(memAddr+3, instr.byte);
-	EEPROM.write(memAddr+4, instr.bit);
-}
-
-void getInstruction(WORD addr, Instruction *instr) {
-	WORD memAddr = (addr * sizeof(Instruction)) + INITIAL_PROGRAM_ADDRESS;
-	instr->operation = EEPROM.read(memAddr);
-	instr->operand = EEPROM.read(memAddr+1);
-	instr->modifier = EEPROM.read(memAddr+2);
-	instr->byte = EEPROM.read(memAddr+3);
-	instr->bit = EEPROM.read(memAddr+4);
-}
+#define	MAX_PROGRAM_SIZE		200
 
 void setNVMem(WORD addr, unsigned char b) {
 	EEPROM.write(addr, b);
@@ -29,4 +14,48 @@ void setNVMem(WORD addr, unsigned char b) {
 
 unsigned char getNVMem(WORD addr) {
 	return EEPROM.read(addr);
+}
+
+void setProgByte(WORD addr, unsigned char b) {
+	setNVMem(addr + ADDR_PROGRAM, b);
+}
+
+unsigned char getProgByte(WORD addr) {
+	return getNVMem(addr + ADDR_PROGRAM);
+}
+
+void setInstruction(WORD instructionPtr, Instruction instr) {
+	WORD memAddr = (instructionPtr * sizeof(Instruction));
+	setProgByte(memAddr, instr.operation);
+	setProgByte(memAddr+1, instr.operand);
+	setProgByte(memAddr+2, instr.modifier);
+	setProgByte(memAddr+3, instr.byte);
+	setProgByte(memAddr+4, instr.bit);
+}
+
+void getInstruction(WORD instructionPtr, Instruction *instr) {
+	WORD memAddr = (instructionPtr * sizeof(Instruction));
+	instr->operation = getProgByte(memAddr);
+	instr->operand = getProgByte(memAddr+1);
+	instr->modifier = getProgByte(memAddr+2);
+	instr->byte = getProgByte(memAddr+3);
+	instr->bit = getProgByte(memAddr+4);
+}
+
+WORD getIOConfig(void) {
+	return getNVMem(ADDR_IOCONFIG) + getNVMem(ADDR_IOCONFIG + 1) * 256;
+}
+
+WORD getIOMask(void) {
+	return getNVMem(ADDR_IOMASK) + getNVMem(ADDR_IOMASK + 1) * 256;
+}
+
+void setIOMask(WORD val) {
+	setNVMem(ADDR_IOMASK, LSB(val));
+	setNVMem(ADDR_IOMASK+1, MSB(val));
+}
+
+void setIOConfig(WORD val) {
+	setNVMem(ADDR_IOCONFIG, LSB(val));
+	setNVMem(ADDR_IOCONFIG+1, MSB(val));
 }

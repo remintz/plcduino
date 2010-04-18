@@ -1,20 +1,12 @@
-/*
- * Memory.c
- *
- *  Created on: 15/03/2010
- *      Author: Renato
- */
-
-//--- memory map
-
 #include <stdio.h>
+#include <WProgram.h>
 #include "util.h"
 #include "memory.h"
 #include "errmsg.h"
 
 #define	MAX_STACK				10
 
-WORD memory[MEM_SIZE];
+unsigned char memory[MEM_SIZE];
 WORD opStack[MAX_STACK];
 WORD valStack[MAX_STACK];
 int opSP;
@@ -33,39 +25,57 @@ void initStack() {
 
 }
 void setMemBit(int addr, int bit, WORD val) {
-	if ((bit < 0) || (bit > 15))
-		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
+//	Serial.print("setMemBit:");
+//	Serial.print(addr,DEC);
+//	Serial.print(",");
+//	Serial.print(bit,DEC);
+//	Serial.print(",");
+//	Serial.println(val,DEC);
+	if ((bit < 0) || (bit > 7))
+		doAbort(MSG_ILLEGAL_BIT);
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
 	modBit(&memory[addr], bit, val);
 }
 
-WORD *getPMem(int addr) {
+unsigned char *getPMem(int addr) {
 	return &memory[addr];
 }
 
-WORD getMemBit(int addr, int bit) {
-	if ((bit < 0) || (bit > 15))
-		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
+unsigned char getMemBit(int addr, int bit) {
+	unsigned char result;
+//	Serial.print("getMemBit(");
+//	Serial.print(addr, DEC);
+//	Serial.print(",");
+//	Serial.print(bit, DEC);
+//	Serial.print("):");
+	if ((bit < 0) || (bit > 7))
+		doAbort(MSG_ILLEGAL_BIT);
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
-	return getBit(memory[addr], bit);
+	result = getBit(memory[addr], bit);
+//	Serial.println(result, DEC);
+	return result;
 }
 
-void setMemInt(int addr, WORD val) {
+void setMemInt(int addr, unsigned char val) {
+//	Serial.print("setMemInt:");
+//	Serial.println(addr,DEC);
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
 	memory[addr] = val;
 }
 
-WORD getMemInt(int addr) {
+unsigned char getMemInt(int addr) {
+//	Serial.print("getMemInt:");
+//	Serial.println(addr,DEC);
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
 	return memory[addr];
 }
 
-void setMem(unsigned char operand, int addr, int bit, WORD val) {
-	int offset;
+void setMem(unsigned char operand, int addr, int bit, unsigned char val) {
+	unsigned char offset;
 	offset = 0;
 	switch (operand) {
 	case 'Q':
@@ -116,8 +126,8 @@ void setMem(unsigned char operand, int addr, int bit, WORD val) {
 	}
 }
 
-WORD getMem(unsigned char operand, int addr, int bit) {
-	int offset;
+unsigned char getMem(unsigned char operand, int addr, int bit) {
+	unsigned char offset;
 	offset = 0;
 	switch (operand) {
 	case 'I':

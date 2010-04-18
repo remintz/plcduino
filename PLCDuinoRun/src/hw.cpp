@@ -12,31 +12,36 @@
 
 #define WDT_LED_CICLE	2000
 int wdtLed;
-WORD lastInput;
-WORD lastOutput;
+//WORD lastInput;
+//WORD lastOutput;
 
 void initHw() {
 	#ifdef ARDUINO
-		Serial.print("initHw\r\n");
+		Serial.println("initHw");
 		WORD ioMask;
 		WORD ioConfig;
 		ioMask = getIOMask();
 		ioConfig = getIOConfig();
 		int i;
 
+		Serial.print("Config:");
 		for (i = 0; i < 16; i++) {
+			Serial.print(i, DEC);
 			if (ioMask & 0x01) {
 				if (ioConfig & 0x01) {
 					pinMode(i, INPUT);
+					Serial.print('I');
 				}
 				else {
 					pinMode(i, OUTPUT);
+					Serial.print('O');
 				}
 			}
 			ioMask = ioMask >> 1;
 			ioConfig = ioConfig >> 1;
+			Serial.println();
 		}
-		pinMode(LEDPIN, OUTPUT);
+//		pinMode(LEDPIN, OUTPUT);
 		wdtLed = WDT_LED_CICLE;
 	#endif
 }
@@ -56,25 +61,21 @@ void kickWDT() {
 	#endif
 }
 
-void readInputs(WORD *p_Memory) {
+void readInputs(unsigned char *p_Memory) {
 #ifdef ARDUINO
 //	Serial.print("readInputs\r\n");
-	WORD in;
-	WORD ioMask;
-	WORD ioConfig;
-	WORD onMask;
+	unsigned char in;
+	unsigned char ioMask;
+	unsigned char ioConfig;
+	unsigned char onMask;
 	int i;
 
+	//--- LSB
 	in = 0;
 	onMask = 0x01;
-	ioMask = getIOMask();
-	ioConfig = getIOConfig();
-//	Serial.print("ioConfig: ");
-//	Serial.print(ioConfig);
-//	Serial.print(" ioMask: ");
-//	Serial.print(ioMask);
-//	Serial.print("\r\n");
-	for (i = 0; i < 16; i++) {
+	ioMask = LSB(getIOMask());
+	ioConfig = LSB(getIOConfig());
+	for (i = 0; i < 8; i++) {
 		if ((ioMask & ioConfig & 0x01) == 1) {
 //			Serial.print("Leu ");
 //			Serial.print(i);
@@ -87,13 +88,36 @@ void readInputs(WORD *p_Memory) {
 		ioMask = ioMask >> 1;
 		ioConfig = ioConfig >> 1;
 	}
-	memcpy(p_Memory, &in, sizeof(WORD));
-	if (in != lastInput) {
-		Serial.print("In:");
-		Serial.print(in);
-		Serial.print("\r\n");
-		lastInput = in;
+	memcpy(p_Memory, &in, 1);
+//	if (in != lastInput) {
+//		Serial.print("In LSB:");
+//		Serial.println(in, DEC);
+//		lastInput = in;
+//	}
+	//--- MSB
+	in = 0;
+	onMask = 0x01;
+	ioMask = MSB(getIOMask());
+	ioConfig = MSB(getIOConfig());
+	for (i = 8; i < 16; i++) {
+		if ((ioMask & ioConfig & 0x01) == 1) {
+//			Serial.print("Leu ");
+//			Serial.print(i);
+//			Serial.print('\r\n');
+			if ((digitalRead(i) & 0x01) == 1) {
+				in = in | onMask;
+			}
+		}
+		onMask = onMask << 1;
+		ioMask = ioMask >> 1;
+		ioConfig = ioConfig >> 1;
 	}
+	memcpy(p_Memory+1, &in, 1);
+//	if (in != lastInput) {
+//		Serial.print("In MSB:");
+//		Serial.println(in, DEC);
+//		lastInput = in;
+//	}
 #else
 	WORD c;
 	printf("<");
@@ -105,24 +129,23 @@ void readInputs(WORD *p_Memory) {
 #endif
 }
 
-void writeOutputs(WORD *p_Memory) {
+void writeOutputs(unsigned char *p_Memory) {
 #ifdef ARDUINO
-//	Serial.print("writeOutputs\r\n");
-	WORD out;
-	WORD ioMask;
-	WORD ioConfig;
+	unsigned char out;
+	unsigned char ioMask;
+	unsigned char ioConfig;
 	int i;
 
-	memcpy(&out, p_Memory, sizeof(WORD));
-	if (out != lastOutput) {
-		Serial.print("out=");
-		Serial.print(out);
-		Serial.print('\r\n');
-		lastOutput = out;
-	}
-	ioMask = getIOMask();
-	ioConfig = ~getIOConfig();
-	for (i = 0; i < 16; i++) {
+	//--- lsb
+	memcpy(&out, p_Memory, 1);
+//	if (out != lastOutput) {
+//		Serial.print("out lsb:");
+//		Serial.println(out,DEC);
+//		lastOutput = out;
+//	}
+	ioMask = LSB(getIOMask());
+	ioConfig = ~LSB(getIOConfig());
+	for (i = 0; i < 8; i++) {
 		if ((ioMask & ioConfig & 0x01) == 1) {
 			if ((out & 0x01) == 1) {
 				digitalWrite(i, HIGH);
@@ -134,6 +157,28 @@ void writeOutputs(WORD *p_Memory) {
 		ioConfig = ioConfig >> 1;
 		out = out >> 1;
 	}
+	//--- MSB
+	memcpy(&out, p_Memory+1, 1);
+//	if (out != lastOutput) {
+//		Serial.print("out msb:");
+//		Serial.println(out,DEC);
+//		lastOutput = out;
+//	}
+	ioMask = MSB(getIOMask());
+	ioConfig = ~MSB(getIOConfig());
+	for (i = 8; i < 16; i++) {
+		if ((ioMask & ioConfig & 0x01) == 1) {
+			if ((out & 0x01) == 1) {
+				digitalWrite(i, HIGH);
+			} else {
+				digitalWrite(i, LOW);
+			}
+		}
+		ioMask = ioMask >> 1;
+		ioConfig = ioConfig >> 1;
+		out = out >> 1;
+	}
+
 #else
 	int i;
 	printf("> ");

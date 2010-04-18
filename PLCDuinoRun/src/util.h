@@ -7,17 +7,16 @@
 
 #define BOOL 	unsigned char
 #define WORD	unsigned int
-#define TRUE	1
-#define FALSE	0
 #define ERROR	-1
 
 #define MAXSTR	255
 #define MAXBUF	1000
 
-WORD getBit(int by, int bit);
-WORD setBit(WORD *by, int bit);
-WORD resetBit(WORD *by, int bit);
-WORD modBit(WORD *by, int bit, BOOL value);
-
+unsigned char getBit(unsigned char by, int bit);
+unsigned char setBit(unsigned char *by, int bit);
+unsigned char resetBit(unsigned char *by, int bit);
+unsigned char  modBit(unsigned char *by, int bit, BOOL value);
+unsigned char MSB(WORD val);
+unsigned char LSB(WORD val);
 
 #endif /* UTIL_H_ */

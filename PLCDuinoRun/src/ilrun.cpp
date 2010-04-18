@@ -69,15 +69,15 @@ BOOL ilRun() {
 	WORD val1;
 	WORD val2;
 
-	BOOL theEnd = FALSE;
-	BOOL abort = FALSE;
-	BOOL found = FALSE;
+	BOOL theEnd = false;
+	BOOL abort = false;
+	BOOL found = false;
 
 	initStack();
 
 	while (!theEnd) {
 		getInstruction(iCurInstruction, &curInstruction);
-		found = TRUE;
+		found = true;
 		switch (curInstruction.operation) {
 		case IL_LD:
 			curResult = getMem(curInstruction.operand, curInstruction.byte, curInstruction.bit);
@@ -107,10 +107,10 @@ BOOL ilRun() {
 		case IL_JMP:
 			break;
 		case IL_END:
-			theEnd = TRUE;
+			theEnd = true;
 			break;
 		default:
-			found = FALSE;
+			found = false;
 			break;
 		}
 		if (!found) {
@@ -196,7 +196,7 @@ BOOL ctrlAbort() {
 }
 
 void ilRunForever() {
-	BOOL theEnd = FALSE;
+	BOOL theEnd = false;
 //	time_t newTime, lastTime;
 //	int deltaTime;
 //	time(&lastTime);
