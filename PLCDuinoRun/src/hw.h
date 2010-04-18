@@ -9,8 +9,8 @@
 #define HW_H_
 
 void initHw();
-void readInputs(WORD *p_Memory);
-void writeOutputs(WORD *p_Memory);
+void readInputs(unsigned char *p_Memory);
+void writeOutputs(unsigned char *p_Memory);
 void kickWDT();
 
 #endif /* HW_H_ */

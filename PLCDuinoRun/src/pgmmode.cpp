@@ -47,6 +47,7 @@ void programMode() {
 					Serial.println(". Enter 256 to stop.");
 					break;
 				case 'd':
+					//--- dump
 					//--- parametros: endereco inicial, endereco final
 					addr1 = msg.readInt();
 					addr2 = msg.readInt();
@@ -54,12 +55,37 @@ void programMode() {
 					Serial.print("DUMP ");
 					Serial.println(addr1,DEC);
 					for (unsigned int i = addr1; i <= addr2; i++) {
-						Serial.print(getNVMem(i),HEX);
+						Serial.print(getNVMem(i),DEC);
 						Serial.print(" ");
 					}
 					break;
+				case 'c':
+					//--- config
+					//--- parametros: tipo, valor
+					//--- tipo 0: exibe config
+					//--- tipo 1: iomask
+					//--- tipo 2: ioconfig
+					addr1 = msg.readInt();
+					addr2 = msg.readInt();
+					switch (addr1) {
+					case 0:
+						Serial.println("Config");
+						Serial.print("ioMask: 0b");
+						Serial.println(getIOMask(),BIN);
+						Serial.print("ioConfig: 0b");
+						Serial.println(getIOConfig(),BIN);
+						break;
+					case 1:
+						setIOMask(addr2);
+						break;
+					case 2:
+						setIOConfig(addr2);
+						break;
+					}
+
+					break;
 				case '.':
-					modoProgramacao = FALSE;
+					modoProgramacao = false;
 					break;
 				default:
 					break;
