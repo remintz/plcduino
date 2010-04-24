@@ -24,13 +24,22 @@ void initStack() {
 	valSP = 0;
 
 }
+
+unsigned char *getPMem(int addr) {
+	return &memory[addr];
+}
+
 void setMemBit(int addr, int bit, WORD val) {
-//	Serial.print("setMemBit:");
-//	Serial.print(addr,DEC);
-//	Serial.print(",");
-//	Serial.print(bit,DEC);
-//	Serial.print(",");
-//	Serial.println(val,DEC);
+	val = val & 0x0001;
+	if (isDebugOn()) {
+		Serial.print("setMemBit(");
+		Serial.print(addr,DEC);
+		Serial.print(",");
+		Serial.print(bit,DEC);
+		Serial.print(",");
+		Serial.print(val,DEC);
+		Serial.println(")");
+	}
 	if ((bit < 0) || (bit > 7))
 		doAbort(MSG_ILLEGAL_BIT);
 	if ((addr < 0) || (addr >= MEM_SIZE))
@@ -38,39 +47,46 @@ void setMemBit(int addr, int bit, WORD val) {
 	modBit(&memory[addr], bit, val);
 }
 
-unsigned char *getPMem(int addr) {
-	return &memory[addr];
-}
-
 unsigned char getMemBit(int addr, int bit) {
 	unsigned char result;
-//	Serial.print("getMemBit(");
-//	Serial.print(addr, DEC);
-//	Serial.print(",");
-//	Serial.print(bit, DEC);
-//	Serial.print("):");
 	if ((bit < 0) || (bit > 7))
 		doAbort(MSG_ILLEGAL_BIT);
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
 	result = getBit(memory[addr], bit);
-//	Serial.println(result, DEC);
+	if (isDebugOn()) {
+		Serial.print("getMemBit(");
+		Serial.print(addr, DEC);
+		Serial.print(",");
+		Serial.print(bit, DEC);
+		Serial.print("):");
+		Serial.println(result, DEC);
+	}
 	return result;
 }
 
 void setMemInt(int addr, unsigned char val) {
-//	Serial.print("setMemInt:");
-//	Serial.println(addr,DEC);
+	if (isDebugOn()) {
+		Serial.print("setMemInt(");
+		Serial.print(addr,DEC);
+		Serial.print(",");
+		Serial.print(val, DEC);
+		Serial.println(")");
+	}
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
 	memory[addr] = val;
 }
 
 unsigned char getMemInt(int addr) {
-//	Serial.print("getMemInt:");
-//	Serial.println(addr,DEC);
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
+	if (isDebugOn()) {
+		Serial.print("getMemInt(");
+		Serial.print(addr,DEC);
+		Serial.print("):");
+		Serial.println(memory[addr], DEC);
+	}
 	return memory[addr];
 }
 
@@ -174,6 +190,19 @@ unsigned char getMem(unsigned char operand, int addr, int bit) {
 		return getMemInt(addr + offset);
 	else
 		return getMemBit(addr + offset, bit);
+}
+
+unsigned char getControl() {
+	return getMem('X', 0, 64);
+}
+
+BOOL isDebugOn() {
+	return false;
+//	return ((getControl() & 0x02) != 0);
+}
+
+BOOL isAbortOn() {
+	return ((getControl() & 0x01) != 0);
 }
 
 void dumpMem(int begin, int end) {

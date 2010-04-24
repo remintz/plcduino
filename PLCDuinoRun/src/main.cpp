@@ -10,6 +10,7 @@
 #include "ilrun.h"
 #include "hw.h"
 #include "pgmmode.h"
+#include "timer.h"
 
 //--- resolver referencia indefinida da biblioteca do Arduino
 extern "C" void __cxa_pure_virtual(void) {
@@ -21,15 +22,18 @@ int main(void) {
 
 	//--- inicializando biblioteca do Arduino
 	init();
+	iniTimer();
 	Serial.begin(9600);
 
-	//--- modo de programação
-	Serial.println();
-	Serial.println("PLCDuino PGM Mode");
-	programMode();
-	//--- modo execucao
-	Serial.println();
-	Serial.println("EXEC Mode");
-	initHw();
-	ilRunForever();
+	while (1) {
+		//--- modo de programação
+		Serial.println();
+		Serial.println("PLCDuino PGM Mode");
+		programMode();
+		//--- modo execucao
+		Serial.println();
+		Serial.println("EXEC Mode");
+		initHw();
+		ilRunForever();
+	}
 }
