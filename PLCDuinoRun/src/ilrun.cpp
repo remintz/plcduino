@@ -11,8 +11,9 @@
 
 #include "memory.h"
 #include "hw.h"
-//#include "FunctionBlocks.h"
+#include "functionblocks.h"
 #include "errmsg.h"
+#include "timer.h"
 
 enum _IL_MODIFIERS {
 	IL_NEG 		= 1,	// '!'
@@ -191,41 +192,32 @@ BOOL ilRun() {
 	return abort;
 }
 
-BOOL ctrlAbort() {
-	return (getMemBit(MEM_OFFSET_CONTROL, 0));
-}
-
 void ilRunForever() {
-	BOOL theEnd = false;
-//	time_t newTime, lastTime;
-//	int deltaTime;
-//	time(&lastTime);
+	int oldTime, newTime, deltaTime;
 	initMem();
-	while (!theEnd) {
-		//kickWDT();
+	oldTime = getTimer();
+	while (true) {
+		kickWDT();
 		readInputs(getPMem(MEM_OFFSET_IN));
 		if (ilRun()) {
+			Serial.println("Aborted.");
 			//--- abort instruction executed
 			break;
 		}
-#if 0
-		dumpMem(0,1);
-		dumpMem(74,83);
-		dumpMem(198,207);
-		time(&newTime);
-		deltaTime = (int)difftime(newTime, lastTime);
-		lastTime = newTime;
-		TONScan((WORD *)getPMem(MEM_OFFSET_TON_IN), (WORD *)getPMem(MEM_OFFSET_TON_OUT), deltaTime);
-		SRScan((WORD *)getPMem(MEM_OFFSET_SR_IN), (WORD *)getPMem(MEM_OFFSET_SR_OUT));
-		RSScan((WORD *)getPMem(MEM_OFFSET_RS_IN), (WORD *)getPMem(MEM_OFFSET_RS_OUT));
-#endif
+		newTime = getTimer();
+		deltaTime = diffTimer(oldTime);
+		oldTime = newTime;
+		TONScan((unsigned char *)getPMem(MEM_OFFSET_TON_IN), (unsigned char *)getPMem(MEM_OFFSET_TON_OUT), deltaTime);
+		SRScan((unsigned char *)getPMem(MEM_OFFSET_SR_IN), (unsigned char *)getPMem(MEM_OFFSET_SR_OUT));
+		RSScan((unsigned char *)getPMem(MEM_OFFSET_RS_IN), (unsigned char *)getPMem(MEM_OFFSET_RS_OUT));
 //		int oBit;
 //		oBit = getMemBit(MEM_OFFSET_IN, 2);
 //		Serial.print("oBit=");
 //		Serial.print(oBit);
 //		Serial.print("\n\r");
 //		setMemBit(MEM_OFFSET_OUT, 13, oBit);
-		if (ctrlAbort()) {
+		if (isAbortOn()) {
+			Serial.println("Stopped.");
 			break;
 		}
 		writeOutputs(getPMem(MEM_OFFSET_OUT));

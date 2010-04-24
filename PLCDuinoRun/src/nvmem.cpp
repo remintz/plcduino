@@ -1,3 +1,4 @@
+#include <WProgram.h>
 #include "EEPROM.h"
 #include "ilcode.h"
 #include "util.h"
@@ -58,4 +59,25 @@ void setIOMask(WORD val) {
 void setIOConfig(WORD val) {
 	setNVMem(ADDR_IOCONFIG, LSB(val));
 	setNVMem(ADDR_IOCONFIG+1, MSB(val));
+}
+
+void printIOSetup() {
+	WORD ioMask;
+	WORD ioConfig;
+	int i;
+	ioConfig = getIOConfig();
+	ioMask = getIOMask();
+	Serial.println("IO Setup:");
+	for (i = 0; i < 16; i++) {
+		Serial.print(i, DEC);
+		if (ioMask & 0x0001) {
+			if (ioConfig & 0x0001) {
+				Serial.print("I");
+			}
+			else {
+				Serial.print("O");
+			}
+		}
+		Serial.println();
+	}
 }

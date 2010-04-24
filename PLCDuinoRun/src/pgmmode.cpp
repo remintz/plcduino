@@ -33,6 +33,7 @@ void programMode() {
 					setNVMem(addr1, i);
 					addr1++;
 				}
+				Serial.println();
 			}
 			else {
 				switch (msg.readChar()) {

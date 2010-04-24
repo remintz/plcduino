@@ -11,5 +11,6 @@ WORD getIOConfig(void);
 WORD getIOMask(void);
 void setIOMask(WORD val);
 void setIOConfig(WORD val);
+void printIOSetup();
 
 #endif /* NVMEM_H_ */

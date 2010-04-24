@@ -3,15 +3,18 @@
 	#include <WProgram.h>
 	#include "config.h"
 	#define LEDPIN	13    // LED connected to digital pin 13
-
 #else
+
 	#include <conio.h>
 	#include <stdio.h>
+
 #endif
 #include "util.h"
 
 #define WDT_LED_CICLE	2000
+
 int wdtLed;
+
 //WORD lastInput;
 //WORD lastOutput;
 
@@ -20,16 +23,18 @@ void initHw() {
 		Serial.println("initHw");
 		WORD ioMask;
 		WORD ioConfig;
-		ioMask = getIOMask();
-		ioConfig = getIOConfig();
 		int i;
 
-		Serial.print("Config:");
+		ioMask = getIOMask();
+		ioConfig = getIOConfig();
+		Serial.println("Config:");
 		for (i = 0; i < 16; i++) {
 			Serial.print(i, DEC);
 			if (ioMask & 0x01) {
 				if (ioConfig & 0x01) {
 					pinMode(i, INPUT);
+					//--- ativa resistor pull-up interno
+					digitalWrite(i, HIGH);
 					Serial.print('I');
 				}
 				else {
@@ -47,17 +52,17 @@ void initHw() {
 }
 void kickWDT() {
 	#ifdef ARDUINO
-		//Serial.print(".\r");
-		if (wdtLed > 0) {
-			digitalWrite(LEDPIN, HIGH);
-		}
-		else {
-			digitalWrite(LEDPIN, LOW);
-		}
-		wdtLed--;
-		if (wdtLed < -WDT_LED_CICLE) {
-			wdtLed = WDT_LED_CICLE;
-		}
+//		Serial.print(".");
+//		if (wdtLed > 0) {
+//			digitalWrite(LEDPIN, HIGH);
+//		}
+//		else {
+//			digitalWrite(LEDPIN, LOW);
+//		}
+//		wdtLed--;
+//		if (wdtLed < -WDT_LED_CICLE) {
+//			wdtLed = WDT_LED_CICLE;
+//		}
 	#endif
 }
 

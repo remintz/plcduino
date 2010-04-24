@@ -44,5 +44,7 @@ WORD opTop();
 void valPush(WORD val);
 WORD valPop();
 WORD valTop();
+BOOL isDebugOn();
+BOOL isAbortOn();
 
 #endif /* MEMORY_H_ */
