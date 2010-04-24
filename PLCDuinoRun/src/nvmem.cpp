@@ -1,20 +1,45 @@
 #include <WProgram.h>
 #include "EEPROM.h"
-#include "ilcode.h"
+#include "errmsg.h"
 #include "util.h"
 
-#define ADDR_IOMASK		0
-#define ADDR_IOCONFIG	2
-#define	ADDR_PROGRAM	10
+#define NVMEM_SIZE				512
+#define	PROGRAM_SIZE			200
+#define GENERAL_SIZE			10
 
-#define	MAX_PROGRAM_SIZE		200
+#define	ADDR_GENERAL	0
+#define ADDR_IOMASK		10	// ADDR_GENERAL + GENERAL_SIZE
+#define ADDR_IOCONFIG	12
+#define	ADDR_PROGRAM	20
 
 void setNVMem(WORD addr, unsigned char b) {
 	EEPROM.write(addr, b);
 }
 
+void setNVMemBit(WORD addr, unsigned char bit, unsigned char b) {
+	unsigned char tmp;
+	b = b & 0x01;
+	if ((bit < 0) || (bit > 7))
+		doAbort(MSG_ILLEGAL_BIT);
+	if ((addr < 0) || (addr >= NVMEM_SIZE))
+		doAbort(MSG_ILLEGAL_NVMEM_ADDRESS);
+	tmp = EEPROM.read(addr);
+	modBit(&tmp, bit, b);
+	EEPROM.write(addr, tmp);
+}
+
 unsigned char getNVMem(WORD addr) {
 	return EEPROM.read(addr);
+}
+
+unsigned char getNVMemBit(WORD addr, unsigned char bit) {
+	unsigned char tmp;
+	if ((bit < 0) || (bit > 7))
+		doAbort(MSG_ILLEGAL_BIT);
+	if ((addr < 0) || (addr >= NVMEM_SIZE))
+		doAbort(MSG_ILLEGAL_NVMEM_ADDRESS);
+	tmp = EEPROM.read(addr);
+	return getBit(tmp, bit);
 }
 
 void setProgByte(WORD addr, unsigned char b) {
@@ -23,24 +48,6 @@ void setProgByte(WORD addr, unsigned char b) {
 
 unsigned char getProgByte(WORD addr) {
 	return getNVMem(addr + ADDR_PROGRAM);
-}
-
-void setInstruction(WORD instructionPtr, Instruction instr) {
-	WORD memAddr = (instructionPtr * sizeof(Instruction));
-	setProgByte(memAddr, instr.operation);
-	setProgByte(memAddr+1, instr.operand);
-	setProgByte(memAddr+2, instr.modifier);
-	setProgByte(memAddr+3, instr.byte);
-	setProgByte(memAddr+4, instr.bit);
-}
-
-void getInstruction(WORD instructionPtr, Instruction *instr) {
-	WORD memAddr = (instructionPtr * sizeof(Instruction));
-	instr->operation = getProgByte(memAddr);
-	instr->operand = getProgByte(memAddr+1);
-	instr->modifier = getProgByte(memAddr+2);
-	instr->byte = getProgByte(memAddr+3);
-	instr->bit = getProgByte(memAddr+4);
 }
 
 WORD getIOConfig(void) {

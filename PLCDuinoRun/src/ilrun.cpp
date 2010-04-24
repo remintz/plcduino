@@ -62,6 +62,15 @@ enum _IL_OPCODES {
 	IL_LAST			// last OP... flag
 } IL_OPCODES;
 
+void getInstruction(WORD instructionPtr, Instruction *instr) {
+	WORD memAddr = (instructionPtr * sizeof(Instruction));
+	instr->operation = getProgByte(memAddr);
+	instr->operand = getProgByte(memAddr+1);
+	instr->modifier = getProgByte(memAddr+2);
+	instr->byte = getProgByte(memAddr+3);
+	instr->bit = getProgByte(memAddr+4);
+}
+
 BOOL ilRun() {
 	unsigned int iCurInstruction = 0;
 	Instruction curInstruction;
