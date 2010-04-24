@@ -7,6 +7,7 @@ const char MSG_VALSTACK_OVERFLOW[] = "Val Stk Ovflw";
 const char MSG_VALSTACK_UNDERFLOW[] = "Val Stk Unflw";
 const char MSG_ILLEGAL_INSTRUCTION[] = "Ill Instruct";
 const char MSG_ILLEGAL_MEMORY_ADDRESS[] = "Ill Mem Addr";
+const char MSG_ILLEGAL_NVMEM_ADDRESS[] = "Ill NVMem Addr";
 const char MSG_ILLEGAL_BIT[] = "Ill Bit";
 //const char MSG_PARSE_ERROR[] = "Parse Err";
 //const char MSG_PARSE_ERR_BADCHAR[] = "Parse Bad Chr";

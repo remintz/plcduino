@@ -3,6 +3,7 @@
 #include "util.h"
 #include "memory.h"
 #include "errmsg.h"
+#include "nvmem.h"
 
 #define	MAX_STACK				10
 
@@ -91,105 +92,123 @@ unsigned char getMemInt(int addr) {
 }
 
 void setMem(unsigned char operand, int addr, int bit, unsigned char val) {
-	unsigned char offset;
-	offset = 0;
-	switch (operand) {
-	case 'Q':
-		offset = MEM_OFFSET_OUT;
-		break;
-	case 'M':
-		offset = MEM_OFFSET_MEM;
-		break;
-	case 'N':
-		offset = MEM_OFFSET_TP_IN;
-		break;
-	case 'O':
-		offset = MEM_OFFSET_TON_IN;
-		break;
-	case 'P':
-		offset = MEM_OFFSET_TOF_IN;
-		break;
-//	case 'C':
-//		offset = MEM_OFFSET_CTU_IN;
-//		break;
-//	case 'D':
-//		offset = MEM_OFFSET_CTD_IN;
-//		break;
-	case 'E':
-		offset = MEM_OFFSET_CTUD_IN;
-		break;
-	case 'T':
-		offset = MEM_OFFSET_RTRIG_IN;
-		break;
-	case 'U':
-		offset = MEM_OFFSET_FTRIG_IN;
-		break;
-	case 'S':
-		offset = MEM_OFFSET_SR_IN;
-		break;
-	case 'R':
-		offset = MEM_OFFSET_RS_IN;
-		break;
-	case 'X':
-		offset = MEM_OFFSET_CONTROL;
-		break;
-	}
-	if (bit == 64) {
-		setMemInt(addr + offset, val);
+	if (operand == 'A') {
+		//--- NVRAM
+		if (bit == 64)
+			setNVMem(addr, val);
+		else
+			setNVMemBit(addr, bit, val);
 	}
 	else {
-		setMemBit(addr + offset, bit, val);
+		unsigned char offset;
+		offset = 0;
+		switch (operand) {
+		case 'Q':
+			offset = MEM_OFFSET_OUT;
+			break;
+		case 'M':
+			offset = MEM_OFFSET_MEM;
+			break;
+		case 'N':
+			offset = MEM_OFFSET_TP_IN;
+			break;
+		case 'O':
+			offset = MEM_OFFSET_TON_IN;
+			break;
+		case 'P':
+			offset = MEM_OFFSET_TOF_IN;
+			break;
+	//	case 'C':
+	//		offset = MEM_OFFSET_CTU_IN;
+	//		break;
+	//	case 'D':
+	//		offset = MEM_OFFSET_CTD_IN;
+	//		break;
+		case 'E':
+			offset = MEM_OFFSET_CTUD_IN;
+			break;
+		case 'T':
+			offset = MEM_OFFSET_RTRIG_IN;
+			break;
+		case 'U':
+			offset = MEM_OFFSET_FTRIG_IN;
+			break;
+		case 'S':
+			offset = MEM_OFFSET_SR_IN;
+			break;
+		case 'R':
+			offset = MEM_OFFSET_RS_IN;
+			break;
+		case 'X':
+			offset = MEM_OFFSET_CONTROL;
+			break;
+		}
+		if (bit == 64) {
+			setMemInt(addr + offset, val);
+		}
+		else {
+			setMemBit(addr + offset, bit, val);
+		}
 	}
 }
 
 unsigned char getMem(unsigned char operand, int addr, int bit) {
-	unsigned char offset;
-	offset = 0;
-	switch (operand) {
-	case 'I':
-		offset = MEM_OFFSET_IN;
-		break;
-	case 'M':
-		offset = MEM_OFFSET_MEM;
-		break;
-	case 'N':
-		offset = MEM_OFFSET_TP_OUT;
-		break;
-	case 'O':
-		offset = MEM_OFFSET_TON_OUT;
-		break;
-	case 'P':
-		offset = MEM_OFFSET_TOF_OUT;
-		break;
-//	case 'C':
-//		offset = MEM_OFFSET_CTU_OUT;
-//		break;
-//	case 'D':
-//		offset = MEM_OFFSET_CTD_OUT;
-//		break;
-	case 'E':
-		offset = MEM_OFFSET_CTUD_OUT;
-		break;
-	case 'T':
-		offset = MEM_OFFSET_RTRIG_OUT;
-		break;
-	case 'U':
-		offset = MEM_OFFSET_FTRIG_OUT;
-		break;
-	case 'S':
-		offset = MEM_OFFSET_SR_OUT;
-		break;
-	case 'R':
-		offset = MEM_OFFSET_RS_OUT;
-		break;
-	case 'X':
-		offset = MEM_OFFSET_CONTROL;
-		break;
+	if (operand == 'A') {
+		//--- NVRAM
+		if (bit == 64)
+			return getNVMem(addr);
+		else
+			return getNVMemBit(addr, bit);
 	}
-	if (bit == 64)
-		return getMemInt(addr + offset);
-	else
-		return getMemBit(addr + offset, bit);
+	else {
+		unsigned char offset;
+		offset = 0;
+		switch (operand) {
+		case 'I':
+			offset = MEM_OFFSET_IN;
+			break;
+		case 'M':
+			offset = MEM_OFFSET_MEM;
+			break;
+		case 'N':
+			offset = MEM_OFFSET_TP_OUT;
+			break;
+		case 'O':
+			offset = MEM_OFFSET_TON_OUT;
+			break;
+		case 'P':
+			offset = MEM_OFFSET_TOF_OUT;
+			break;
+			//	case 'C':
+			//		offset = MEM_OFFSET_CTU_OUT;
+			//		break;
+			//	case 'D':
+			//		offset = MEM_OFFSET_CTD_OUT;
+			//		break;
+		case 'E':
+			offset = MEM_OFFSET_CTUD_OUT;
+			break;
+		case 'T':
+			offset = MEM_OFFSET_RTRIG_OUT;
+			break;
+		case 'U':
+			offset = MEM_OFFSET_FTRIG_OUT;
+			break;
+		case 'S':
+			offset = MEM_OFFSET_SR_OUT;
+			break;
+		case 'R':
+			offset = MEM_OFFSET_RS_OUT;
+			break;
+		case 'X':
+			offset = MEM_OFFSET_CONTROL;
+			break;
+		}
+		if (bit == 64)
+			return getMemInt(addr + offset);
+		else
+			return getMemBit(addr + offset, bit);
+	}
 }
 
 unsigned char getControl() {
