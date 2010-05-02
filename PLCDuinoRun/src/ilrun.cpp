@@ -217,6 +217,7 @@ void ilRunForever() {
 		deltaTime = diffTimer(oldTime);
 		oldTime = newTime;
 		TONScan((unsigned char *)getPMem(MEM_OFFSET_TON_IN), (unsigned char *)getPMem(MEM_OFFSET_TON_OUT), deltaTime);
+		TOFScan((unsigned char *)getPMem(MEM_OFFSET_TOF_IN), (unsigned char *)getPMem(MEM_OFFSET_TOF_OUT), deltaTime);
 		TPScan((unsigned char *)getPMem(MEM_OFFSET_TP_IN), (unsigned char *)getPMem(MEM_OFFSET_TP_OUT), deltaTime);
 		SRScan((unsigned char *)getPMem(MEM_OFFSET_SR_IN), (unsigned char *)getPMem(MEM_OFFSET_SR_OUT));
 		RSScan((unsigned char *)getPMem(MEM_OFFSET_RS_IN), (unsigned char *)getPMem(MEM_OFFSET_RS_OUT));

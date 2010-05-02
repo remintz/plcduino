@@ -153,3 +153,48 @@ void TPScan(unsigned char *p_in, unsigned char *p_out, int p_DeltaTime) {
 	}
 	memcpy(p_out, &newQ, 1);
 }
+
+void TOFScan(unsigned char *p_in, unsigned char *p_out, int p_DeltaTime) {
+	unsigned char in, newQ;
+	unsigned char mask;
+	unsigned char tofQ;
+	int tofPT, tofET;
+	int i;
+
+	memcpy(&in, p_in, 1);
+	memcpy(&newQ, p_out, 1);
+	mask = 0x01;
+	for (i = 0; i < 2; i++) {
+		memcpy(&tofET, p_out + 1 + (i * 2), sizeof(int));
+		memcpy(&tofPT, p_in + 1 + (i * 2), sizeof(int));
+		tofQ = newQ & mask;
+//		if (tofQ & 0x01) {
+//			Serial.print("in=");
+//			Serial.print(in,DEC);
+//			Serial.print(" Q=");
+//			Serial.print(tofQ,DEC);
+//			Serial.print(" ET=");
+//			Serial.print(tofET,DEC);
+//			Serial.print(" PT=");
+//			Serial.print(tofPT,DEC);
+//			Serial.print(" Delta=");
+//			Serial.println(p_DeltaTime, DEC);
+//		}
+		if ((tofQ == 0x01) && ((in & 0x01) == 0)) {
+			tofET += p_DeltaTime;
+			if (tofET >= tofPT) {
+				tofET = tofPT;
+				tofQ = 0;
+				}
+			}
+		if ((in & 0x01) == 1) {
+			tofQ = 1;
+			tofET = 0;
+		}
+		newQ = (newQ & ~mask) | (tofQ << i);
+		memcpy(p_out + 1 + (i * 2), &tofET, sizeof(int));
+		in = in >> 1;
+		mask = mask << 1;
+	}
+	memcpy(p_out, &newQ, 1);
+}
