@@ -92,6 +92,16 @@ unsigned char getMemInt(int addr) {
 }
 
 void setMem(unsigned char operand, int addr, int bit, unsigned char val) {
+	if (isDebugOn()) {
+		Serial.print("setMem: operand=");
+		Serial.print(operand);
+		Serial.print(" addr=");
+		Serial.print(addr,DEC);
+		Serial.print(" bit=");
+		Serial.print(bit, DEC);
+		Serial.print(" val=");
+		Serial.println(val, DEC);
+	}
 	if (operand == 'A') {
 		//--- NVRAM
 		if (bit == 64)
@@ -153,6 +163,14 @@ void setMem(unsigned char operand, int addr, int bit, unsigned char val) {
 }
 
 unsigned char getMem(unsigned char operand, int addr, int bit) {
+	if (isDebugOn()) {
+		Serial.print("getMem: operand=");
+		Serial.print(operand);
+		Serial.print(" addr=");
+		Serial.print(addr,DEC);
+		Serial.print(" bit=");
+		Serial.println(bit, DEC);
+	}
 	if (operand == 'A') {
 		//--- NVRAM
 		if (bit == 64)

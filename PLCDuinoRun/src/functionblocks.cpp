@@ -9,6 +9,7 @@
  *      Author: Renato
  */
 
+#include <Wprogram.h>
 #include <string.h>
 //#include <time.h>
 #include "util.h"
@@ -84,6 +85,14 @@ void TONScan(unsigned char *p_in, unsigned char *p_out, int p_DeltaTime) {
 		memcpy(&tonPT, p_in + 1 + (i * 2), sizeof(int));
 		tonQ = 0;
 		if (in & 0x01) {
+			Serial.print("in=");
+			Serial.print(in,DEC);
+			Serial.print(" ET=");
+			Serial.print(tonET,DEC);
+			Serial.print(" PT=");
+			Serial.print(tonPT,DEC);
+			Serial.print(" Delta=");
+			Serial.println(p_DeltaTime, DEC);
 			if (tonET < tonPT) {
 				tonET += p_DeltaTime;
 				if (tonET > tonPT) {
@@ -94,8 +103,51 @@ void TONScan(unsigned char *p_in, unsigned char *p_out, int p_DeltaTime) {
 				tonQ = 1;
 			}
 		}
+		else {
+			tonET = 0;
+			tonQ = 0;
+		}
 		newQ = (newQ & ~mask) | (tonQ << i);
 		memcpy(p_out + 1 + (i * 2), &tonET, sizeof(int));
+		in = in >> 1;
+		mask = mask << 1;
+	}
+	memcpy(p_out, &newQ, 1);
+}
+
+void TPScan(unsigned char *p_in, unsigned char *p_out, int p_DeltaTime) {
+	unsigned char in, newQ;
+	unsigned char mask;
+	unsigned char tpQ;
+	int tpPT, tpET;
+	int i;
+
+	memcpy(&in, p_in, 1);
+	memcpy(&newQ, p_out, 1);
+	mask = 0x01;
+	for (i = 0; i < 2; i++) {
+		memcpy(&tpET, p_out + 1 + (i * 2), sizeof(int));
+		memcpy(&tpPT, p_in + 1 + (i * 2), sizeof(int));
+		tpQ = newQ & mask;
+		if (tpET >= tpPT) {
+			tpQ = 0;
+		} else {
+			if (tpQ == 1) {
+				tpET += p_DeltaTime;
+				if (tpET >= tpPT) {
+					tpET = tpPT;
+					tpQ = 0;
+				}
+			}
+		}
+		if (((in & 0x01) == 1) && (tpET == 0)) {
+			tpQ = 1;
+		}
+		if (((in & 0x01) == 0) && (tpET == tpPT)) {
+			tpET = 0;
+		}
+		newQ = (newQ & ~mask) | (tpQ << i);
+		memcpy(p_out + 1 + (i * 2), &tpET, sizeof(int));
 		in = in >> 1;
 		mask = mask << 1;
 	}
