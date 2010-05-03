@@ -198,3 +198,80 @@ void TOFScan(unsigned char *p_in, unsigned char *p_out, int p_DeltaTime) {
 	}
 	memcpy(p_out, &newQ, 1);
 }
+
+void CTUDScan(unsigned char *p_in, unsigned char *p_out) {
+	unsigned char cu, cd, r, ld, mcu, mcd, m, newM, qu, qd, q, newQ;
+	unsigned char in1, in2;
+	unsigned char mask;
+	int pv, cv;
+	int i;
+
+	memcpy(&in1, p_in, 1); // cu e cd
+	memcpy(&in2, p_in+1, 1); // r e ld
+	memcpy(&m, p_out+1, 1); // status anterior de cu e cd
+	memcpy(&q, p_out, 1); // qu e qd
+	newQ = q;
+	newM = in1;
+	mask = 0x03;
+	for (i = 0; i < 4; i++) {
+		r = in2 & 0x01;
+		ld = (in2 >> 1) & 0x01;
+		cu = in1 & 0x01;
+		cd = (in1 >> 1) & 0x01;
+		mcu = m & 0x01;
+		mcd = (m >> 1) & 0x01;
+		memcpy(&pv, p_in + 2 + (i * 2), sizeof(int));
+		memcpy(&cv, p_out + 2 + (i * 2), sizeof(int));
+		qu = q & 0x01;
+		qd = (q >> 1) & 0x01;
+
+			Serial.print("r=");
+			Serial.print(r,DEC);
+			Serial.print(" ld=");
+			Serial.print(ld,DEC);
+			Serial.print(" cu=");
+			Serial.print(cu,DEC);
+			Serial.print(" cd=");
+			Serial.print(cd,DEC);
+			Serial.print(" mcu=");
+			Serial.print(mcu,DEC);
+			Serial.print(" mcd=");
+			Serial.print(mcd,DEC);
+			Serial.print(" pv=");
+			Serial.print(pv,DEC);
+			Serial.print(" cv=");
+			Serial.print(cv,DEC);
+			Serial.print(" qu=");
+			Serial.print(qu,DEC);
+			Serial.print(" qd=");
+			Serial.println(qd,DEC);
+
+		if (r == 1) {
+			cv = 0;
+		} else if (ld == 1) {
+			cv = pv;
+		} else {
+			if (!((cu == 1) && (cd == 1))) {
+				if ((mcu == 0) && (cu == 1) && (cv < pv)) {
+					cv = cv + 1;
+				}
+				else if ((mcd == 0) && (cd == 1) && (cv > 0)) {
+					cv = cv - 1;
+				}
+			}
+		}
+		qu = (cv >= pv);
+		qd = (cv <= 0);
+
+		newQ = (newQ & ~mask);
+		newQ = newQ | (qu << (i * 2)) | (qd << (i * 2 + 1));
+		memcpy(p_out + 2 + (i * 2), &cv, sizeof(int));
+		in1 = in1 >> 2;
+		in2 = in2 >> 2;
+		m = m >> 2;
+		q = q >> 2;
+		mask = mask << 2;
+	}
+	memcpy(p_out, &newQ, 1);
+	memcpy(p_out + 1, &newM, 1);
+}

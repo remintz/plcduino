@@ -221,6 +221,8 @@ void ilRunForever() {
 		TPScan((unsigned char *)getPMem(MEM_OFFSET_TP_IN), (unsigned char *)getPMem(MEM_OFFSET_TP_OUT), deltaTime);
 		SRScan((unsigned char *)getPMem(MEM_OFFSET_SR_IN), (unsigned char *)getPMem(MEM_OFFSET_SR_OUT));
 		RSScan((unsigned char *)getPMem(MEM_OFFSET_RS_IN), (unsigned char *)getPMem(MEM_OFFSET_RS_OUT));
+		CTUDScan((unsigned char *)getPMem(MEM_OFFSET_CTUD_IN), (unsigned char *)getPMem(MEM_OFFSET_CTUD_OUT));
+
 //		int oBit;
 //		oBit = getMemBit(MEM_OFFSET_IN, 2);
 //		Serial.print("oBit=");
