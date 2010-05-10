@@ -229,6 +229,7 @@ int read_char(char * line, int idx)
 	case 'S':
 	case 'R':
 	case 'X':
+	case 'A':
 		r = line[idx];
 		break;
 	default:
@@ -352,6 +353,8 @@ int parse_il_line(char *line, Instruction *op)
 			operand = read_char(str,1);
 		else
 			return ERR_BADOPERAND;
+		if (operand == ERR_BADCHAR)
+			return ERR_BADOPERAND;
 		printf("operand:%d\n",operand);
 
 		//7.  read first numeric chars after operand. store byte. if not found or out of range, return error.
@@ -374,17 +377,17 @@ int parse_il_line(char *line, Instruction *op)
 
 		//9.  if found, read next char. if not found, or not numeric, or >7, return error. store bit.
 	}
-	else
-	{
-		if (operator==IL_JMP)
-		{
-			str = strchr(buf, ' ');
-			if (!str)
-				return ERR_BADOPERAND;
-			strcpy(op->jmpLabel, str+1);
-		}
-	}
-	strcpy(op->lineLabel, label_buf);
+//	else
+//	{
+//		if (operator==IL_JMP)
+//		{
+//			str = strchr(buf, ' ');
+//			if (!str)
+//				return ERR_BADOPERAND;
+//			strcpy(op->jmpLabel, str+1);
+//		}
+//	}
+//	strcpy(op->lineLabel, label_buf);
 	op->operation = operator;
 	op->modifier = modifier;
 	op->operand = operand;

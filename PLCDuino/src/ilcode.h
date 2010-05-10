@@ -57,8 +57,8 @@ enum {
 
 typedef struct _instruction
 {
-	char lineLabel[MAXSTR];
-	char jmpLabel[MAXSTR];
+//	char lineLabel[MAXSTR];
+//	char jmpLabel[MAXSTR];
 	BYTE operation;
 	BYTE operand;
 	BYTE modifier;
