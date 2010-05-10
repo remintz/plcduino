@@ -1,5 +1,6 @@
 #include <WProgram.h>
 
+#include "hw.h"
 #include "util.h"
 #include "ilcode.h"
 #include "nvmem.h"
@@ -37,6 +38,31 @@ void programMode() {
 			}
 			else {
 				switch (msg.readChar()) {
+				case 'i':
+					//--- le e exibe o valor de um pino de entrada
+					//--- parametros: numero do pino
+					Serial.println();
+					addr1 = msg.readInt();
+					for (i = 0; i < 100; i++) {
+						addr2 = digitalRead(addr1);
+						Serial.print("Pin ");
+						Serial.print(addr1, DEC);
+						Serial.print("=");
+						Serial.println(addr2, DEC);
+					}
+					break;
+
+				case 'o':
+					//--- escreve um valor em um pino de saída
+					//--- parametros: numero do pino, valor (0 ou 1)
+					addr1 = msg.readInt();
+					addr2 = msg.readInt();
+					if (addr2 & 0x01)
+						digitalWrite(addr1,HIGH);
+					else
+						digitalWrite(addr1,LOW);
+					break;
+
 				case 'l':
 					//--- entra em modo de carga de bytes
 					//--- parametros: endereco
@@ -66,6 +92,7 @@ void programMode() {
 					//--- tipo 0: exibe config
 					//--- tipo 1: iomask
 					//--- tipo 2: ioconfig
+					//--- tipo 3: initHw
 					addr1 = msg.readInt();
 					addr2 = msg.readInt();
 					switch (addr1) {
@@ -81,6 +108,9 @@ void programMode() {
 						break;
 					case 2:
 						setIOConfig(addr2);
+						break;
+					case 3:
+						initHw();
 						break;
 					}
 

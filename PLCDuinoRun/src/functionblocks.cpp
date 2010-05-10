@@ -168,25 +168,25 @@ void TOFScan(unsigned char *p_in, unsigned char *p_out, int p_DeltaTime) {
 		memcpy(&tofET, p_out + 1 + (i * 2), sizeof(int));
 		memcpy(&tofPT, p_in + 1 + (i * 2), sizeof(int));
 		tofQ = newQ & mask;
-//		if (tofQ & 0x01) {
-//			Serial.print("in=");
-//			Serial.print(in,DEC);
-//			Serial.print(" Q=");
-//			Serial.print(tofQ,DEC);
-//			Serial.print(" ET=");
-//			Serial.print(tofET,DEC);
-//			Serial.print(" PT=");
-//			Serial.print(tofPT,DEC);
-//			Serial.print(" Delta=");
-//			Serial.println(p_DeltaTime, DEC);
-//		}
+		//		if (tofQ & 0x01) {
+		//			Serial.print("in=");
+		//			Serial.print(in,DEC);
+		//			Serial.print(" Q=");
+		//			Serial.print(tofQ,DEC);
+		//			Serial.print(" ET=");
+		//			Serial.print(tofET,DEC);
+		//			Serial.print(" PT=");
+		//			Serial.print(tofPT,DEC);
+		//			Serial.print(" Delta=");
+		//			Serial.println(p_DeltaTime, DEC);
+		//		}
 		if ((tofQ == 0x01) && ((in & 0x01) == 0)) {
 			tofET += p_DeltaTime;
 			if (tofET >= tofPT) {
 				tofET = tofPT;
 				tofQ = 0;
-				}
 			}
+		}
 		if ((in & 0x01) == 1) {
 			tofQ = 1;
 			tofET = 0;
@@ -224,7 +224,7 @@ void CTUDScan(unsigned char *p_in, unsigned char *p_out) {
 		memcpy(&cv, p_out + 2 + (i * 2), sizeof(int));
 		qu = q & 0x01;
 		qd = (q >> 1) & 0x01;
-
+		if (i == 0) {
 			Serial.print("r=");
 			Serial.print(r,DEC);
 			Serial.print(" ld=");
@@ -245,7 +245,7 @@ void CTUDScan(unsigned char *p_in, unsigned char *p_out) {
 			Serial.print(qu,DEC);
 			Serial.print(" qd=");
 			Serial.println(qd,DEC);
-
+		}
 		if (r == 1) {
 			cv = 0;
 		} else if (ld == 1) {
