@@ -17,6 +17,7 @@
 
 ; ioMask =   0b11001111111100 = 13308
 ; ioConfig = 0b01000011111100 = 4348
+; ioNeg = 0b01000011111100 = 4348
 
 ; Logica de Memorizacao das Chamadas
 ;B1ON = (B1 or B1ON) and not F1
