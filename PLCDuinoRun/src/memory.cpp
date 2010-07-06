@@ -23,7 +23,6 @@ void initMem() {
 void initStack() {
 	opSP = 0;
 	valSP = 0;
-
 }
 
 unsigned char *getPMem(int addr) {
@@ -246,9 +245,19 @@ void dumpMem(int begin, int end) {
 	int i;
 	if (end >= MEM_SIZE)
 		end = MEM_SIZE - 1;
-	for (i = begin; i <= end; i++) {
-		printf("MEM[%d] = 0x%04X\n", i, memory[i]);
+	i = begin;
+	while (i <= end) {
+		if ((i == begin) || ((i % 16) == 0)) {
+			Serial.println();
+			Serial.print("MEM[");
+			Serial.print(i,HEX);
+			Serial.print("] - ");
+		}
+		Serial.print(memory[i], HEX);
+		Serial.print(" ");
+		i++;
 	}
+	Serial.println();
 }
 
 void opPush(WORD op) {
