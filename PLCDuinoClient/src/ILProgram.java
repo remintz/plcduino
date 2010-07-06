@@ -17,4 +17,13 @@ public class ILProgram {
 			i.dump();
 		}
 	}
+
+	public ArrayList<Integer> toArray() {
+		ArrayList<Integer> ret = new ArrayList<Integer>();
+		int iRet = 0;
+		for (Instruction i: this.instructionList) {
+			ret.addAll(i.toList());
+		}
+		return ret;
+	}
 }

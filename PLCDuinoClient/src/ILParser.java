@@ -6,6 +6,7 @@ import java.io.IOException;
 
 
 public class ILParser {
+	private boolean isVerbose;
 	private static final int ERROR = -1;
 	private static final int CH_ERR_BADCHAR = 255;
 	private static final String[] IL_COMMANDS = {
@@ -107,7 +108,8 @@ public class ILParser {
 		String label_buf;
 		int modifier, operand = 0, operator;
 
-		System.out.printf("Instr: %s\n",line);
+		if (isVerbose)
+			System.out.printf("Instr: %s\n",line);
 
 		//--- 1. read up to ';' or \n and truncate comments
 		i = 0;
@@ -122,15 +124,18 @@ public class ILParser {
 			i = 0;
 			label_buf = line.substring(0, j);
 			buf = line.substring(j);
-			System.out.printf("label:%s\n",label_buf);
+			if (isVerbose)
+				System.out.printf("label:%s\n",label_buf);
 		}
 		else
 			buf = line;
 
 		// skip blanks and tabs
 		i = 0;
-		while (buf.charAt(i) == ' ' || buf.charAt(i) == '\t')
+		while (buf.charAt(i) == ' ' || buf.charAt(i) == '\t') {
 			i++;
+			if (i >= line.length()) return null;
+		}
 		buf = buf.substring(i);
 		//--- get operator
 
@@ -153,7 +158,8 @@ public class ILParser {
 				}
 			}
 		}
-		System.out.printf("modifier:%d\n",modifier);
+		if (isVerbose)
+			System.out.printf("modifier:%d\n",modifier);
 
 		String bufOp = buf;
 		//---4. read operator from beginning to modifier. check if invalid, (return error)
@@ -167,8 +173,10 @@ public class ILParser {
 		if (i >= IL_COMMANDS.length)
 			throw new ParserException("ERR_BADOPERATOR");
 		operator = i;
-		System.out.printf("operator:%s ",IL_COMMANDS[operator]);
-		System.out.printf("(%d)\n",operator);
+		if (isVerbose)
+			System.out.printf("operator:%s ",IL_COMMANDS[operator]);
+		if (isVerbose)
+			System.out.printf("(%d)\n",operator);
 		if (operator > Instruction.IL_CAL) {
 			//5. if operator supports arguments, find first '%'. (special case: JMP (string). if not found return error
 			if ((j = buf.indexOf('%')) < 0)
@@ -182,13 +190,15 @@ public class ILParser {
 				throw new ParserException("ERR_BADOPERAND");
 			if (operand == CH_ERR_BADCHAR)
 				throw new ParserException("ERR_BADOPERAND");
-			System.out.printf("operand:%d\n",operand);
+			if (isVerbose)
+				System.out.printf("operand:%d\n",operand);
 
 			//7.  read first numeric chars after operand. store byte. if not found or out of range, return error.
 			byt = extract_number(buf,1);
 			if (byt < 0)
 				throw new ParserException("ERR_BADINDEX");
-			System.out.printf("byte:%d\n",byt);
+			if (isVerbose)
+				System.out.printf("byte:%d\n",byt);
 
 			//8.  find '/'. if not found truncate, return.
 			bit = 64;
@@ -199,7 +209,8 @@ public class ILParser {
 					throw new ParserException("ERR_BADINDEX");
 				else
 					bit = buf.charAt(1) - '0';
-				System.out.printf ("bit:%d\n",bit);
+				if (isVerbose)
+					System.out.printf ("bit:%d\n",bit);
 			}
 			//9.  if found, read next char. if not found, or not numeric, or >7, return error. store bit.
 		}
@@ -218,7 +229,8 @@ public class ILParser {
 		return op;
 	}
 
-	public ILProgram parse(String fileIn) {
+	public ILProgram parse(String fileIn, boolean verbose) {
+		isVerbose = verbose;
 		File inputFile = new File(fileIn);
 		BufferedReader input = null;
 		try {

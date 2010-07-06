@@ -1,0 +1,101 @@
+; B1 - IN.0.2 - Pino 2
+; B2 - IN.0.3 - Pino 3
+; B3 - IN.0.4 - Pino 4
+; F1 - IN.0.5 - Pino 5
+; F2 - IN.0.6 - Pino 6
+; F3 - IN.0.7 - Pino 7
+; STOPPROGRAM - IN.1.4 - Pino 12
+; MOTUP - OUT.1.0 - Pino 8
+; MOTDN - OUT.1.1 - Pino 9
+; B1ON - M.0.0
+; B2ON - M.0.1
+; B3ON - M.0.2
+; CALLUP - M.0.3
+; CALLDN - M.0.4
+; MOTOFF - M.0.5
+; TPSTOP - M.0.6
+
+; ioMask =   0b11001111111100 = 13308
+; ioConfig = 0b01000011111100 = 4348
+
+; Logica de Memorizacao das Chamadas
+;B1ON = (B1 or B1ON) and not F1
+	LD %I000/2
+	OR %M000/0
+	AND! %I000/5
+	ST %M000/0
+
+;B2ON = (B2 or B2ON) and not F2
+	LD %I000/3
+	OR %M000/1
+	AND! %I000/6
+	ST %M000/1
+
+;B3ON = (B3 or B3ON) and not F3
+	LD %I000/4
+	OR %M000/2
+	AND! %I000/7
+	ST %M000/2
+
+; Logica de Deteccao do Sentido do Movimento
+;CALLUP = ((F1 and (B2ON or B3ON)) or (F2 and B3ON)) and MOTOFF
+	LD %M000/1		; B2ON
+	OR %M000/2		; B3ON
+	AND %I000/5		; F1
+	OR( %M000/2	; B3ON	
+	AND %I000/6		; F2
+	)
+	AND %M000/5		; MOTOFF
+	ST %M000/3		; CALLUP
+
+;CALLDN = ((F3 and (B1ON or B2ON)) or (F2 and B1ON)) and MOTOFF
+	LD %M000/0		; B1ON
+	OR %M000/1		; B2ON
+	AND %I000/7		; F3
+	OR( %M000/0	; B1ON	
+	AND %I000/6		; F2
+	)
+	AND %M000/5		; MOTOFF
+	ST %M000/4		; CALLDN
+
+; Logicas de Partida e Parada do Motor
+;MOTOFF = (F1 and B1ON) or (F2 and B2ON) or (F3 and B3ON)
+	LD %I000/5		; F1
+	AND %M000/0		; B1ON
+	OR( %I000/6		; F2
+	AND %M000/1		; B2ON
+	)
+	OR( %I000/7		; F3
+	AND %M000/2		; B3ON
+	)
+	ST %M000/5		; MOTOFF
+
+;MOTUP = (MOTUP or CALLUP) and (not MOTOFF) and (not TPSTOP)
+	LD %O001/0		; MOTUP
+	OR %M000/3		; CALLUP
+	AND! %M000/5	; MOTOFF
+	AND! %M000/6	; TPSTOP
+	ST %O001/0		; MOTUP
+
+;MOTDN = (MOTDN or CALLDN) and (not MOTOFF) and (not TPSTOP)
+	LD %O001/1		; MOTDN
+	OR %M000/4		; CALLDN
+	AND! %M000/5	; MOTOFF
+	AND! %M000/6	; TPSTOP
+	ST %O001/0
+
+; Logica de Tempo Minimo de Parada
+
+;TP0.IN = MOTOFF
+	LD %M000/5		; MOTOFF
+	ST %N000/0		; TP0.IN
+	
+;TPSTOP = TP0.Q
+	LD %N000/0		; TP0.Q
+	ST %M000/6
+
+; Entrada no modo programacao
+	
+	LD %I001/0
+	STN %X000/0 ; CONTROL.0.0 = IN.0.4
+
