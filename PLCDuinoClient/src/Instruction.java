@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 
 public class Instruction {
 	private int operator;
@@ -21,6 +23,16 @@ public class Instruction {
 		System.out.printf("%d\n", this.byt);
 		System.out.printf("%d\n", this.bit);
 	}
+
+	public ArrayList<Integer> toList() {
+		ArrayList<Integer> ret = new ArrayList<Integer>();
+		ret.add(this.operator);
+		ret.add(this.modifier);
+		ret.add(this.operand);
+		ret.add(this.byt);
+		ret.add(this.bit);
+		return ret;
+	};
 
 	//--- Modifiers
 	public static final int IL_NOP 	= 0;
@@ -77,6 +89,7 @@ public class Instruction {
 			return code;
 		}
 		
-	};
+	}
+
 	
 }
