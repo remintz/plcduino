@@ -73,6 +73,7 @@ void programMode() {
 					Serial.print(addr1, DEC);
 					Serial.println(". Enter 256 to stop.");
 					break;
+
 				case 'd':
 					//--- dump
 					//--- parametros: endereco inicial, endereco final
@@ -86,22 +87,36 @@ void programMode() {
 						Serial.print(" ");
 					}
 					break;
+
+				case 's':
+					//--- toggle STEP state
+					toggleStep();
+					if (isStep()) {
+						Serial.println("STEP on");
+					} else {
+						Serial.println("STEP off");
+					}
+					break;
+
 				case 'c':
 					//--- config
 					//--- parametros: tipo, valor
 					//--- tipo 0: exibe config
 					//--- tipo 1: iomask
 					//--- tipo 2: ioconfig
-					//--- tipo 3: initHw
+					//--- tipo 3: ioneg
+					//--- tipo 4: initHw
 					addr1 = msg.readInt();
 					addr2 = msg.readInt();
 					switch (addr1) {
 					case 0:
 						Serial.println("Config");
-						Serial.print("ioMask: 0b");
+						Serial.print("1 - ioMask  : 0b");
 						Serial.println(getIOMask(),BIN);
-						Serial.print("ioConfig: 0b");
+						Serial.print("2 - ioConfig: 0b");
 						Serial.println(getIOConfig(),BIN);
+						Serial.print("3 - ioNeg   : 0b");
+						Serial.println(getIONeg(),BIN);
 						break;
 					case 1:
 						setIOMask(addr2);
@@ -110,14 +125,18 @@ void programMode() {
 						setIOConfig(addr2);
 						break;
 					case 3:
+						setIONeg(addr2);
+						break;
+					case 4:
 						initHw();
 						break;
 					}
-
 					break;
+
 				case '.':
 					modoProgramacao = false;
 					break;
+
 				default:
 					break;
 				}

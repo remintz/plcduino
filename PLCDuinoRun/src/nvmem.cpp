@@ -4,12 +4,15 @@
 #include "util.h"
 
 #define NVMEM_SIZE				512
-#define	PROGRAM_SIZE			200
+#define	PROGRAM_SIZE			400
 #define GENERAL_SIZE			10
 
 #define	ADDR_GENERAL	0
 #define ADDR_IOMASK		10	// ADDR_GENERAL + GENERAL_SIZE
 #define ADDR_IOCONFIG	12
+#define ADDR_IONEG		14
+#define ADDR_STEP		16
+#define ADDR_TRACE		17
 #define	ADDR_PROGRAM	20
 
 void setNVMem(WORD addr, unsigned char b) {
@@ -58,6 +61,26 @@ WORD getIOMask(void) {
 	return getNVMem(ADDR_IOMASK) + getNVMem(ADDR_IOMASK + 1) * 256;
 }
 
+WORD getIONeg(void) {
+	return getNVMem(ADDR_IONEG) + getNVMem(ADDR_IONEG + 1) * 256;
+}
+
+BOOL isStep() {
+	return (getNVMem(ADDR_STEP) == 1);
+}
+
+void toggleStep() {
+	if (isStep()) {
+		setNVMem(ADDR_STEP, 0);
+	} else {
+		setNVMem(ADDR_STEP, 1);
+	}
+}
+
+BOOL isTrace() {
+	return (getNVMem(ADDR_TRACE) == 1);
+}
+
 void setIOMask(WORD val) {
 	setNVMem(ADDR_IOMASK, LSB(val));
 	setNVMem(ADDR_IOMASK+1, MSB(val));
@@ -68,12 +91,20 @@ void setIOConfig(WORD val) {
 	setNVMem(ADDR_IOCONFIG+1, MSB(val));
 }
 
+void setIONeg(WORD val) {
+	setNVMem(ADDR_IONEG, LSB(val));
+	setNVMem(ADDR_IONEG+1, MSB(val));
+}
+
+/*
 void printIOSetup() {
 	WORD ioMask;
 	WORD ioConfig;
+	WORD ioNeg;
 	int i;
 	ioConfig = getIOConfig();
 	ioMask = getIOMask();
+	ioNeg = getIONeg();
 	Serial.println("IO Setup:");
 	for (i = 0; i < 16; i++) {
 		Serial.print(i, DEC);
@@ -84,7 +115,11 @@ void printIOSetup() {
 			else {
 				Serial.print("O");
 			}
+			if (ioNeg & 0x0001) {
+				Serial.print("N");
+			}
 		}
 		Serial.println();
 	}
 }
+*/

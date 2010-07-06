@@ -13,6 +13,7 @@
 #include <string.h>
 //#include <time.h>
 #include "util.h"
+#include "memory.h"
 
 void SRScan(unsigned char *p_in, unsigned char *p_out) {
 	unsigned char in, out, newOut;
@@ -85,14 +86,16 @@ void TONScan(unsigned char *p_in, unsigned char *p_out, int p_DeltaTime) {
 		memcpy(&tonPT, p_in + 1 + (i * 2), sizeof(int));
 		tonQ = 0;
 		if (in & 0x01) {
-			Serial.print("in=");
-			Serial.print(in,DEC);
-			Serial.print(" ET=");
-			Serial.print(tonET,DEC);
-			Serial.print(" PT=");
-			Serial.print(tonPT,DEC);
-			Serial.print(" Delta=");
-			Serial.println(p_DeltaTime, DEC);
+			if (isDebugOn()) {
+				Serial.print("in=");
+				Serial.print(in,DEC);
+				Serial.print(" ET=");
+				Serial.print(tonET,DEC);
+				Serial.print(" PT=");
+				Serial.print(tonPT,DEC);
+				Serial.print(" Delta=");
+				Serial.println(p_DeltaTime, DEC);
+			}
 			if (tonET < tonPT) {
 				tonET += p_DeltaTime;
 				if (tonET > tonPT) {
@@ -225,26 +228,28 @@ void CTUDScan(unsigned char *p_in, unsigned char *p_out) {
 		qu = q & 0x01;
 		qd = (q >> 1) & 0x01;
 		if (i == 0) {
-			Serial.print("r=");
-			Serial.print(r,DEC);
-			Serial.print(" ld=");
-			Serial.print(ld,DEC);
-			Serial.print(" cu=");
-			Serial.print(cu,DEC);
-			Serial.print(" cd=");
-			Serial.print(cd,DEC);
-			Serial.print(" mcu=");
-			Serial.print(mcu,DEC);
-			Serial.print(" mcd=");
-			Serial.print(mcd,DEC);
-			Serial.print(" pv=");
-			Serial.print(pv,DEC);
-			Serial.print(" cv=");
-			Serial.print(cv,DEC);
-			Serial.print(" qu=");
-			Serial.print(qu,DEC);
-			Serial.print(" qd=");
-			Serial.println(qd,DEC);
+			if (isDebugOn()) {
+				Serial.print("r=");
+				Serial.print(r,DEC);
+				Serial.print(" ld=");
+				Serial.print(ld,DEC);
+				Serial.print(" cu=");
+				Serial.print(cu,DEC);
+				Serial.print(" cd=");
+				Serial.print(cd,DEC);
+				Serial.print(" mcu=");
+				Serial.print(mcu,DEC);
+				Serial.print(" mcd=");
+				Serial.print(mcd,DEC);
+				Serial.print(" pv=");
+				Serial.print(pv,DEC);
+				Serial.print(" cv=");
+				Serial.print(cv,DEC);
+				Serial.print(" qu=");
+				Serial.print(qu,DEC);
+				Serial.print(" qd=");
+				Serial.println(qd,DEC);
+			}
 		}
 		if (r == 1) {
 			cv = 0;

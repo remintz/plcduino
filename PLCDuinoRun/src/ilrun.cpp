@@ -203,6 +203,8 @@ BOOL ilRun() {
 
 void ilRunForever() {
 	int oldTime, newTime, deltaTime;
+	unsigned char c;
+
 	initMem();
 	oldTime = getTimer();
 	while (true) {
@@ -234,6 +236,13 @@ void ilRunForever() {
 			break;
 		}
 		writeOutputs(getPMem(MEM_OFFSET_OUT));
+		if (isStep()) {
+			dumpMem(0, MEM_SIZE);
+			Serial.print("STEP>");
+			while (!Serial.available());
+			c = Serial.read();
+			Serial.println("");
+		}
 	}
 }
 

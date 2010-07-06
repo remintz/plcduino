@@ -9,8 +9,15 @@ void setProgByte(WORD addr, unsigned char b);
 unsigned char getProgByte(WORD addr);
 WORD getIOConfig(void);
 WORD getIOMask(void);
+WORD getIONeg(void);
 void setIOMask(WORD val);
 void setIOConfig(WORD val);
-void printIOSetup();
+void setIONeg(WORD val);
+
+void toggleStep();
+BOOL isStep();
+BOOL isTrace();
+
+//void printIOSetup();
 
 #endif /* NVMEM_H_ */
