@@ -11,6 +11,7 @@ public class ILParser {
 	private static final int CH_ERR_BADCHAR = 255;
 	private static final String[] IL_COMMANDS = {
 		//--- same order as IL_OPCODES enum
+		"END",
 		")",
 		"RET",
 		"JMP",
