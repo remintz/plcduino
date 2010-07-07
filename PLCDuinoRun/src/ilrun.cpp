@@ -1,19 +1,13 @@
 #include "util.h"
 #include "ilcode.h"
-#ifdef ARDUINO
-	#include <Wprogram.h>
-	#include "nvmem.h"
-#else
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <time.h>
-#endif
-
+#include <Wprogram.h>
 #include "memory.h"
 #include "hw.h"
 #include "functionblocks.h"
 #include "errmsg.h"
 #include "timer.h"
+#include "nvmem.h"
+#include "stepinstruction.h"
 
 enum _IL_MODIFIERS {
 	IL_NEG 		= 1,	// '!'
@@ -65,17 +59,38 @@ enum _IL_OPCODES {
 void getInstruction(WORD instructionPtr, Instruction *instr) {
 	WORD memAddr = (instructionPtr * sizeof(Instruction));
 	instr->operation = getProgByte(memAddr);
-	instr->operand = getProgByte(memAddr+1);
-	instr->modifier = getProgByte(memAddr+2);
+	instr->modifier = getProgByte(memAddr+1);
+	instr->operand = getProgByte(memAddr+2);
 	instr->byte = getProgByte(memAddr+3);
 	instr->bit = getProgByte(memAddr+4);
 }
 
+
+WORD curResult;
+unsigned int iCurInstruction;
+Instruction curInstruction;
+
+void printCurResult() {
+	Serial.print(curResult, DEC);
+}
+
+void printCurInstruction() {
+	Serial.print("[");
+	Serial.print(iCurInstruction, DEC);
+	Serial.print("] ");
+	Serial.print(curInstruction.operation, DEC);
+	Serial.print(",");
+	Serial.print(curInstruction.modifier, DEC);
+	Serial.print(",");
+	Serial.print(curInstruction.operand, DEC);
+	Serial.print(",");
+	Serial.print(curInstruction.byte, DEC);
+	Serial.print(",");
+	Serial.print(curInstruction.bit, DEC);
+}
+
 BOOL ilRun() {
-	unsigned int iCurInstruction = 0;
-	Instruction curInstruction;
 	WORD operat;
-	WORD curResult = 0;
 	WORD val1;
 	WORD val2;
 
@@ -84,6 +99,8 @@ BOOL ilRun() {
 	BOOL found = false;
 
 	initStack();
+	curResult = 0;
+	iCurInstruction = 0;
 
 	while (!theEnd) {
 		getInstruction(iCurInstruction, &curInstruction);
@@ -196,6 +213,7 @@ BOOL ilRun() {
 				}
 			}
 		}
+		stepInstruction();
 		iCurInstruction++;
 	}
 	return abort;
@@ -203,7 +221,6 @@ BOOL ilRun() {
 
 void ilRunForever() {
 	int oldTime, newTime, deltaTime;
-	unsigned char c;
 
 	initMem();
 	oldTime = getTimer();
@@ -236,13 +253,6 @@ void ilRunForever() {
 			break;
 		}
 		writeOutputs(getPMem(MEM_OFFSET_OUT));
-		if (isStep()) {
-			dumpMem(0, MEM_SIZE);
-			Serial.print("STEP>");
-			while (!Serial.available());
-			c = Serial.read();
-			Serial.println("");
-		}
 	}
 }
 

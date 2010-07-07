@@ -164,7 +164,7 @@ void setMem(unsigned char operand, int addr, int bit, unsigned char val) {
 unsigned char getMem(unsigned char operand, int addr, int bit) {
 	if (isDebugOn()) {
 		Serial.print("getMem: operand=");
-		Serial.print(operand);
+		Serial.print(operand, DEC);
 		Serial.print(" addr=");
 		Serial.print(addr,DEC);
 		Serial.print(" bit=");
@@ -241,6 +241,24 @@ BOOL isAbortOn() {
 	return ((getControl() & 0x01) != 0);
 }
 
+void printStack() {
+	int i;
+	Serial.println("VAL STK");
+	for (i = valSP-1; i >= 0; i--) {
+		Serial.print("[");
+		Serial.print(i, DEC);
+		Serial.print("]=");
+		Serial.println(valStack[i]);
+	}
+	Serial.println("OP STK");
+	for (i = opSP-1; i >= 0; i--) {
+		Serial.print("[");
+		Serial.print(i, DEC);
+		Serial.print("]=");
+		Serial.println(opStack[i]);
+	}
+}
+
 void dumpMem(int begin, int end) {
 	int i;
 	if (end >= MEM_SIZE)
@@ -261,6 +279,7 @@ void dumpMem(int begin, int end) {
 }
 
 void opPush(WORD op) {
+//	Serial.println("opPush");
 	if (opSP >= MAX_STACK)
 		doAbort(MSG_OPSTACK_OVERFLOW);
 	opStack[opSP] = op;
@@ -281,6 +300,7 @@ WORD opTop() {
 }
 
 void valPush(WORD val) {
+//	Serial.println("valPush");
 	if (valSP >= MAX_STACK)
 		doAbort(MSG_VALSTACK_OVERFLOW);
 	valStack[valSP] = val;

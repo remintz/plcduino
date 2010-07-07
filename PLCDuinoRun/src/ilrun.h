@@ -13,6 +13,9 @@
 void initMem();
 void setMemInt(int addr, int val);
 void dumpMem();
+void printCurResult();
+void printCurInstruction();
+
 void ilRunForever();
 
 #endif /* ILRUN_H_ */
