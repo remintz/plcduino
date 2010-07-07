@@ -34,6 +34,7 @@ unsigned char getMemInt(int addr);
 void setMem(unsigned char operand, int addr, int bit, unsigned char val);
 unsigned char getMem(unsigned char operand, int addr, int bit);
 void dumpMem(int begin, int end);
+void printStack();
 void opPush(WORD op);
 WORD opPop();
 WORD opTop();
