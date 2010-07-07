@@ -41,11 +41,11 @@ public class Instruction {
 	public static final int IL_NORM = 3;		// ' '
 	public static final int IL_COND = 4;		// '?'
 	
-	public static final int IL_CAL = 0;
-
+	public static final int IL_CAL = 4;
+/*
 	public enum IlOpCodes {
 		//no operand
-//		IL_END		(0),			//END
+		IL_END		(0),			//END
 		IL_POP		(1),			//)
 		IL_RET		(2),			//RET
 		//arithmetic LABEL
@@ -55,7 +55,7 @@ public class Instruction {
 		//--------------- all operators below support arguments
 		//boolean, no modifier
 		IL_SET		(5),			//S
-		IL_RESET	(6),		//R
+		IL_RESET	(6),			//R
 		//boolean, all modifiers
 		IL_AND		(7),		 	//AND
 		IL_OR		(8),			//OR
@@ -80,7 +80,7 @@ public class Instruction {
 		IL_LT		(25),
 		IL_LE		(26),
 		IL_LAST		(27);			// last OP... flag
-		
+
 		private final int code;
 		private IlOpCodes(int code) {
 			this.code = code;
@@ -88,8 +88,8 @@ public class Instruction {
 		public int getCode() {
 			return code;
 		}
-		
 	}
+*/		
 
 	
 }

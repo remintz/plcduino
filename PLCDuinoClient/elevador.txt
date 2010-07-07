@@ -4,7 +4,7 @@
 ; F1 - IN.0.5 - Pino 5
 ; F2 - IN.0.6 - Pino 6
 ; F3 - IN.0.7 - Pino 7
-; STOPPROGRAM - IN.1.4 - Pino 12
+; STOPPROGRAM - IN.1.2 - Pino 10
 ; MOTUP - OUT.1.0 - Pino 8
 ; MOTDN - OUT.1.1 - Pino 9
 ; B1ON - M.0.0
@@ -15,8 +15,8 @@
 ; MOTOFF - M.0.5
 ; TPSTOP - M.0.6
 
-; ioMask =   0b11001111111100 = 13308
-; ioConfig = 0b01000011111100 = 4348
+; ioMask =   0b11011111111100 = 14332
+; ioConfig = 0b01010011111100 = 5372
 ; ioNeg = 0b01000011111100 = 4348
 
 ; Logica de Memorizacao das Chamadas
@@ -43,7 +43,7 @@
 	LD %M000/1		; B2ON
 	OR %M000/2		; B3ON
 	AND %I000/5		; F1
-	OR( %M000/2	; B3ON	
+	OR( %M000/2		; B3ON	
 	AND %I000/6		; F2
 	)
 	AND %M000/5		; MOTOFF
@@ -97,6 +97,7 @@
 
 ; Entrada no modo programacao
 	
-	LD %I001/0
+	LD %I001/2
 	STN %X000/0 ; CONTROL.0.0 = IN.0.4
+	END
 

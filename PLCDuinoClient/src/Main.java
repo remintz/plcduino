@@ -25,7 +25,7 @@ public class Main {
 			} else if (args[i].startsWith("-d")) {
 				dump = true;
 			} else if (args[i].startsWith("-v")) {
-				dump = true;
+				verbose = true;
 			} else if (args[i].startsWith("-c")) {
 				serialPort = args[i].replace("-c","");
 			}
