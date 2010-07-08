@@ -10,11 +10,15 @@
 ; B1ON - M.0.0
 ; B2ON - M.0.1
 ; B3ON - M.0.2
+; F1ON - M.1.0
+; F2ON - M.1.1
+; F3ON - M.1.2
 ; CALLUP - M.0.3
 ; CALLDN - M.0.4
-; MOTOFF - M.0.5
+; MOTOFF - M.0.5 = deve ser inicializado com 1
 ; TPSTOP - M.0.6
 
+;---- preparação
 ; ioMask =   0b11011111111100 = 14332
 ; ioConfig = 0b01010011111100 = 5372
 ; ioNeg = 0b01000011111100 = 4348
@@ -38,52 +42,73 @@
 	AND! %I000/7
 	ST %M000/2
 
+;F1ON = (F1 or F1ON) and not (F2 or F3)
+	LD %I000/5		; F1
+	OR %M001/0		; F1ON
+	ANDN %I000/6	; F2
+	ANDN %I000/7	; F3
+	ST %M001/0
+	
+;F2ON = (F2 or F2ON) and not (F1 or F3)
+	LD %I000/6		; F2
+	OR %M001/1		; F2ON
+	ANDN %I000/5	; F1
+	ANDN %I000/7	; F3
+	ST %M001/1
+	
+;F3ON = (F3 or F3ON) and not (F1 or F2)
+	LD %I000/7		; F3
+	OR %M001/2		; F3ON
+	ANDN %I000/6	; F2
+	ANDN %I000/5	; F1
+	ST %M001/2
+
 ; Logica de Deteccao do Sentido do Movimento
-;CALLUP = ((F1 and (B2ON or B3ON)) or (F2 and B3ON)) and MOTOFF
+;CALLUP =  ((F1ON and (B2ON or B3ON)) or (F2ON and B3ON)) and (not CALLDN)
 	LD %M000/1		; B2ON
 	OR %M000/2		; B3ON
-	AND %I000/5		; F1
+	AND %M001/0		; F1ON
 	OR( %M000/2		; B3ON	
-	AND %I000/6		; F2
+	AND %M001/1		; F2ON
 	)
-	AND %M000/5		; MOTOFF
+	ANDN %M001/4   	; CALLDN
 	ST %M000/3		; CALLUP
 
-;CALLDN = ((F3 and (B1ON or B2ON)) or (F2 and B1ON)) and MOTOFF
+;CALLDN = ((F3ON and (B1ON or B2ON)) or (F2ON and B1ON)) and (not CALLUP)
 	LD %M000/0		; B1ON
 	OR %M000/1		; B2ON
-	AND %I000/7		; F3
-	OR( %M000/0	; B1ON	
-	AND %I000/6		; F2
+	AND %M001/2		; F3ON
+	OR( %M000/0		; B1ON	
+	AND %M001/1		; F2ON
 	)
-	AND %M000/5		; MOTOFF
+	ANDN %M001/3    ; CALLUP
 	ST %M000/4		; CALLDN
 
 ; Logicas de Partida e Parada do Motor
-;MOTOFF = (F1 and B1ON) or (F2 and B2ON) or (F3 and B3ON)
-	LD %I000/5		; F1
+;MOTOFF = (F1ON and B1ON) or (F2ON and B2ON) or (F3ON and B3ON) 
+	LD %M001/0		; F1ON
 	AND %M000/0		; B1ON
-	OR( %I000/6		; F2
+	OR( %M001/1		; F2ON
 	AND %M000/1		; B2ON
 	)
-	OR( %I000/7		; F3
+	OR( %M001/2		; F3ON
 	AND %M000/2		; B3ON
 	)
 	ST %M000/5		; MOTOFF
 
 ;MOTUP = (MOTUP or CALLUP) and (not MOTOFF) and (not TPSTOP)
-	LD %O001/0		; MOTUP
+	LD %Q001/0		; MOTUP
 	OR %M000/3		; CALLUP
 	AND! %M000/5	; MOTOFF
 	AND! %M000/6	; TPSTOP
-	ST %O001/0		; MOTUP
+	ST %Q001/0		; MOTUP
 
 ;MOTDN = (MOTDN or CALLDN) and (not MOTOFF) and (not TPSTOP)
-	LD %O001/1		; MOTDN
+	LD %Q001/1		; MOTDN
 	OR %M000/4		; CALLDN
 	AND! %M000/5	; MOTOFF
 	AND! %M000/6	; TPSTOP
-	ST %O001/0
+	ST %Q001/1		; MOTDN
 
 ; Logica de Tempo Minimo de Parada
 
