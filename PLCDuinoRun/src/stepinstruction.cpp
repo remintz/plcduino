@@ -17,10 +17,7 @@ void printStatus() {
 	Serial.println();
 }
 
-void stepInstruction() {
-
-	if (!isStep()) return;
-
+void processStep(int type) {
 	Messenger msg = Messenger();
 	BOOL modoStep = true;
 	unsigned char c;
@@ -30,7 +27,11 @@ void stepInstruction() {
 
 	//--- prompt
 	printStatus();
-	Serial.print("STEP>");
+	if (type == 1) {
+		Serial.print("STEP CYCLE>");
+	} else {
+		Serial.print("STEP INSTR>");
+	}
 	while (modoStep) {
 		//--- aguarda caracteres pela serial
 		while (!Serial.available());
@@ -79,19 +80,26 @@ void stepInstruction() {
 
 			case 'r':
 				//--- dump memoria normal
-				//--- parametros: endereco inicial, endereco final
-				addr1 = msg.readInt();
-				addr2 = msg.readInt();
-				dumpMem(addr1, addr2);
+				dumpMem();
 				break;
 
 			case 's':
-				//--- toggle STEP state
-				toggleStep();
-				if (isStep()) {
-					Serial.println("STEP on");
+				//--- toggle STEP Instruction state
+				toggleStepInstruction();
+				if (isStepInstruction()) {
+					Serial.println("STEP INSTR on");
 				} else {
-					Serial.println("STEP off");
+					Serial.println("STEP INSTR off");
+				}
+				break;
+
+			case 'S':
+				//--- toggle STEP cycle state
+				toggleStepCycle();
+				if (isStepCycle()) {
+					Serial.println("STEP CYCLE on");
+				} else {
+					Serial.println("STEP CYCLE off");
 				}
 				break;
 
@@ -115,8 +123,22 @@ void stepInstruction() {
 			if (modoStep) {
 				//--- prompt
 				Serial.println();
-				Serial.print("STEP>");
+				if (type == 1) {
+					Serial.print("STEP CYCLE>");
+				} else {
+					Serial.print("STEP INSTR>");
+				}
 			}
 		}
 	}
+}
+
+void stepCycle() {
+	if (!isStepCycle()) return;
+	processStep(1);
+}
+
+void stepInstruction() {
+	if (!isStepInstruction()) return;
+	processStep(2);
 }

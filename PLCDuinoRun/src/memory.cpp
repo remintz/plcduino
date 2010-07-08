@@ -181,6 +181,9 @@ unsigned char getMem(unsigned char operand, int addr, int bit) {
 		unsigned char offset;
 		offset = 0;
 		switch (operand) {
+		case 'Q':
+			offset = MEM_OFFSET_OUT;
+			break;
 		case 'I':
 			offset = MEM_OFFSET_IN;
 			break;
@@ -259,21 +262,115 @@ void printStack() {
 	}
 }
 
-void dumpMem(int begin, int end) {
-	int i;
-	if (end >= MEM_SIZE)
-		end = MEM_SIZE - 1;
-	i = begin;
-	while (i <= end) {
-		if ((i == begin) || ((i % 16) == 0)) {
-			Serial.println();
-			Serial.print("MEM[");
-			Serial.print(i,HEX);
-			Serial.print("] - ");
-		}
-		Serial.print(memory[i], HEX);
+void dumpMem() {
+	int i, j;
+	j = 0;
+	Serial.print("M:");
+	for (i = 1; i <= 4; i++) {
+		Serial.print(memory[j++],HEX);
 		Serial.print(" ");
-		i++;
+	}
+	Serial.println();
+	Serial.print("I:");
+	for (i = 1; i <= 2; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("R:");
+	for (i = 1; i <= 1; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("S:");
+	for (i = 1; i <= 1; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("E:");
+	for (i = 1; i <= 10; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("N:");
+	for (i = 1; i <= 5; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("O:");
+	for (i = 1; i <= 5; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("P:");
+	for (i = 1; i <= 5; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("T:");
+	for (i = 1; i <= 1; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("U:");
+	for (i = 1; i <= 1; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("Q:");
+	for (i = 1; i <= 2; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("R:");
+	for (i = 1; i <= 1; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("S:");
+	for (i = 1; i <= 1; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("E:");
+	for (i = 1; i <= 10; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("N:");
+	for (i = 1; i <= 5; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("O:");
+	for (i = 1; i <= 5; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("P:");
+	for (i = 1; i <= 5; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
+	}
+	Serial.println();
+	Serial.print("T/U:");
+	for (i = 1; i <= 1; i++) {
+		Serial.print(memory[j++],HEX);
+		Serial.print(" ");
 	}
 	Serial.println();
 }
