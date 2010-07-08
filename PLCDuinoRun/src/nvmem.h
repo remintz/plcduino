@@ -14,8 +14,10 @@ void setIOMask(WORD val);
 void setIOConfig(WORD val);
 void setIONeg(WORD val);
 
-void toggleStep();
-BOOL isStep();
+void toggleStepInstruction();
+void toggleStepCycle();
+BOOL isStepInstruction();
+BOOL isStepCycle();
 BOOL isTrace();
 
 //void printIOSetup();

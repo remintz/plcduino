@@ -11,8 +11,9 @@
 #define ADDR_IOMASK		10	// ADDR_GENERAL + GENERAL_SIZE
 #define ADDR_IOCONFIG	12
 #define ADDR_IONEG		14
-#define ADDR_STEP		16
-#define ADDR_TRACE		17
+#define ADDR_STEPINSTR	16
+#define ADDR_STEPCYCLE	17
+#define ADDR_TRACE		18
 #define	ADDR_PROGRAM	20
 
 void setNVMem(WORD addr, unsigned char b) {
@@ -65,15 +66,27 @@ WORD getIONeg(void) {
 	return getNVMem(ADDR_IONEG) + getNVMem(ADDR_IONEG + 1) * 256;
 }
 
-BOOL isStep() {
-	return (getNVMem(ADDR_STEP) == 1);
+BOOL isStepInstruction() {
+	return (getNVMem(ADDR_STEPINSTR) == 1);
 }
 
-void toggleStep() {
-	if (isStep()) {
-		setNVMem(ADDR_STEP, 0);
+BOOL isStepCycle() {
+	return (getNVMem(ADDR_STEPCYCLE) == 1);
+}
+
+void toggleStepInstruction() {
+	if (isStepInstruction()) {
+		setNVMem(ADDR_STEPINSTR, 0);
 	} else {
-		setNVMem(ADDR_STEP, 1);
+		setNVMem(ADDR_STEPINSTR, 1);
+	}
+}
+
+void toggleStepCycle() {
+	if (isStepCycle()) {
+		setNVMem(ADDR_STEPCYCLE, 0);
+	} else {
+		setNVMem(ADDR_STEPCYCLE, 1);
 	}
 }
 

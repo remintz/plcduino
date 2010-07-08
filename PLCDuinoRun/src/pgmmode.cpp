@@ -89,12 +89,22 @@ void programMode() {
 					break;
 
 				case 's':
-					//--- toggle STEP state
-					toggleStep();
-					if (isStep()) {
-						Serial.println("STEP on");
+					//--- toggle STEP Instruction state
+					toggleStepInstruction();
+					if (isStepInstruction()) {
+						Serial.println("STEP INSTR on");
 					} else {
-						Serial.println("STEP off");
+						Serial.println("STEP INSTR off");
+					}
+					break;
+
+				case 'S':
+					//--- toggle STEP cycle state
+					toggleStepCycle();
+					if (isStepCycle()) {
+						Serial.println("STEP CYCLE on");
+					} else {
+						Serial.println("STEP CYCLE off");
 					}
 					break;
 

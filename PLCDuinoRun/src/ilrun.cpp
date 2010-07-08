@@ -253,6 +253,7 @@ void ilRunForever() {
 			break;
 		}
 		writeOutputs(getPMem(MEM_OFFSET_OUT));
+		stepCycle();
 	}
 }
 
