@@ -15,7 +15,7 @@
 unsigned char getBit(unsigned char by, int bit);
 unsigned char setBit(unsigned char *by, int bit);
 unsigned char resetBit(unsigned char *by, int bit);
-unsigned char  modBit(unsigned char *by, int bit, BOOL value);
+unsigned char  modBit(unsigned char *by, int bit, int value);
 unsigned char MSB(WORD val);
 unsigned char LSB(WORD val);
 

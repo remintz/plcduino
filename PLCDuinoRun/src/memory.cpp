@@ -29,9 +29,10 @@ unsigned char *getPMem(int addr) {
 	return &memory[addr];
 }
 
-void setMemBit(int addr, int bit, WORD val) {
+void setMemBit(int addr, int bit, int val) {
 	val = val & 0x0001;
-	if (isDebugOn()) {
+//	if (isDebugOn()) {
+	if (true) {
 		Serial.print("setMemBit(");
 		Serial.print(addr,DEC);
 		Serial.print(",");
@@ -47,8 +48,8 @@ void setMemBit(int addr, int bit, WORD val) {
 	modBit(&memory[addr], bit, val);
 }
 
-unsigned char getMemBit(int addr, int bit) {
-	unsigned char result;
+int getMemBit(int addr, int bit) {
+	int result;
 	if ((bit < 0) || (bit > 7))
 		doAbort(MSG_ILLEGAL_BIT);
 	if ((addr < 0) || (addr >= MEM_SIZE))
@@ -65,7 +66,7 @@ unsigned char getMemBit(int addr, int bit) {
 	return result;
 }
 
-void setMemInt(int addr, unsigned char val) {
+void setMemByte(int addr, unsigned char val) {
 	if (isDebugOn()) {
 		Serial.print("setMemInt(");
 		Serial.print(addr,DEC);
@@ -78,7 +79,7 @@ void setMemInt(int addr, unsigned char val) {
 	memory[addr] = val;
 }
 
-unsigned char getMemInt(int addr) {
+unsigned char getMemByte(int addr) {
 	if ((addr < 0) || (addr >= MEM_SIZE))
 		doAbort(MSG_ILLEGAL_MEMORY_ADDRESS);
 	if (isDebugOn()) {
@@ -153,7 +154,7 @@ void setMem(unsigned char operand, int addr, int bit, unsigned char val) {
 			break;
 		}
 		if (bit == 64) {
-			setMemInt(addr + offset, val);
+			setMemByte(addr + offset, val);
 		}
 		else {
 			setMemBit(addr + offset, bit, val);
@@ -225,7 +226,7 @@ unsigned char getMem(unsigned char operand, int addr, int bit) {
 			break;
 		}
 		if (bit == 64)
-			return getMemInt(addr + offset);
+			return getMemByte(addr + offset);
 		else
 			return getMemBit(addr + offset, bit);
 	}
