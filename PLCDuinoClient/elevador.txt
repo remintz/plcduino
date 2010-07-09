@@ -15,32 +15,13 @@
 ; F3ON - M.1.2
 ; CALLUP - M.0.3
 ; CALLDN - M.0.4
-; MOTOFF - M.0.5 = deve ser inicializado com 1
+; MOTOFF - M.0.5
 ; TPSTOP - M.0.6
 
 ;---- preparação
 ; ioMask =   0b11011111111100 = 14332
 ; ioConfig = 0b01010011111100 = 5372
 ; ioNeg = 0b01000011111100 = 4348
-
-; Logica de Memorizacao das Chamadas
-;B1ON = (B1 or B1ON) and not F1
-	LD %I000/2
-	OR %M000/0
-	AND! %I000/5
-	ST %M000/0
-
-;B2ON = (B2 or B2ON) and not F2
-	LD %I000/3
-	OR %M000/1
-	AND! %I000/6
-	ST %M000/1
-
-;B3ON = (B3 or B3ON) and not F3
-	LD %I000/4
-	OR %M000/2
-	AND! %I000/7
-	ST %M000/2
 
 ;F1ON = (F1 or F1ON) and not (F2 or F3)
 	LD %I000/5		; F1
@@ -119,6 +100,25 @@
 ;TPSTOP = TP0.Q
 	LD %N000/0		; TP0.Q
 	ST %M000/6
+
+; Logica de Memorizacao das Chamadas
+;B1ON = (B1 or B1ON) and not F1
+	LD %I000/2
+	OR %M000/0
+	AND! %I000/5
+	ST %M000/0
+
+;B2ON = (B2 or B2ON) and not F2
+	LD %I000/3
+	OR %M000/1
+	AND! %I000/6
+	ST %M000/1
+
+;B3ON = (B3 or B3ON) and not F3
+	LD %I000/4
+	OR %M000/2
+	AND! %I000/7
+	ST %M000/2
 
 ; Entrada no modo programacao
 	
