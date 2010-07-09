@@ -18,7 +18,7 @@ unsigned char resetBit(unsigned char *by, int bit) {
 	return *by;
 }
 
-unsigned char modBit(unsigned char *by, int bit, BOOL value) {
+unsigned char modBit(unsigned char *by, int bit, int value) {
 	if (value) {
 		return setBit(by, bit);
 	} else {
