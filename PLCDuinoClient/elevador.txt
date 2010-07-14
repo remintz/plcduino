@@ -4,9 +4,12 @@
 ; F1 - IN.0.5 - Pino 5
 ; F2 - IN.0.6 - Pino 6
 ; F3 - IN.0.7 - Pino 7
-; STOPPROGRAM - IN.1.2 - Pino 10
-; MOTUP - OUT.1.0 - Pino 8
-; MOTDN - OUT.1.1 - Pino 9
+; STOPPROGRAM - IN.1.0 - Pino 8
+; MOTUP - OUT.1.1 - Pino 9
+; MOTDN - OUT.1.2 - Pino 10
+; L1 - OUT.1.3 - Pino 11
+; L2 - OUT.1.4 - Pino 12
+; L3 - OUT.1.5 - Pino 13
 ; B1ON - M.0.0
 ; B2ON - M.0.1
 ; B3ON - M.0.2
@@ -17,11 +20,12 @@
 ; CALLDN - M.0.4
 ; MOTOFF - M.0.5
 ; TPSTOP - M.0.6
+; 
 
 ;---- preparação
-; ioMask =   0b11011111111100 = 14332
-; ioConfig = 0b01010011111100 = 5372
-; ioNeg = 0b01000011111100 = 4348
+; ioMask =   0b11111111111100 = 16380
+; ioConfig = 0b00000111111100 = 508
+; ioNeg =    0b00000011111100 = 252
 
 ;F1ON = (F1 or F1ON) and not (F2 or F3)
 	LD %I000/5		; F1
@@ -52,7 +56,7 @@
 	OR( %M000/2		; B3ON	
 	AND %M001/1		; F2ON
 	)
-	ANDN %M001/4   	; CALLDN
+	ANDN %M000/4   	; CALLDN
 	ST %M000/3		; CALLUP
 
 ;CALLDN = ((F3ON and (B1ON or B2ON)) or (F2ON and B1ON)) and (not CALLUP)
@@ -62,7 +66,7 @@
 	OR( %M000/0		; B1ON	
 	AND %M001/1		; F2ON
 	)
-	ANDN %M001/3    ; CALLUP
+	ANDN %M000/3    ; CALLUP
 	ST %M000/4		; CALLDN
 
 ; Logicas de Partida e Parada do Motor
@@ -78,51 +82,69 @@
 	ST %M000/5		; MOTOFF
 
 ;MOTUP = (MOTUP or CALLUP) and (not MOTOFF) and (not TPSTOP)
-	LD %Q001/0		; MOTUP
+	LD %Q001/1		; MOTUP
 	OR %M000/3		; CALLUP
 	AND! %M000/5	; MOTOFF
 	AND! %M000/6	; TPSTOP
-	ST %Q001/0		; MOTUP
+	ST %Q001/1		; MOTUP
 
 ;MOTDN = (MOTDN or CALLDN) and (not MOTOFF) and (not TPSTOP)
-	LD %Q001/1		; MOTDN
+	LD %Q001/2		; MOTDN
 	OR %M000/4		; CALLDN
 	AND! %M000/5	; MOTOFF
 	AND! %M000/6	; TPSTOP
-	ST %Q001/1		; MOTDN
+	ST %Q001/2		; MOTDN
 
 ; Logica de Tempo Minimo de Parada
 
+;TP0.PT = NVMEM[0] - numero inteiro
+	LD %A000		; NVMEM[0]
+	ST %N001		; TP0.PT (LSB)
+	LD %A001		; NVMEM[1]
+	ST %N002		; TPO.PT (MSB)
+	
 ;TP0.IN = MOTOFF
 	LD %M000/5		; MOTOFF
 	ST %N000/0		; TP0.IN
 	
 ;TPSTOP = TP0.Q
 	LD %N000/0		; TP0.Q
-	ST %M000/6
+	ST %M000/6		; TPSTOP
 
 ; Logica de Memorizacao das Chamadas
 ;B1ON = (B1 or B1ON) and not F1
-	LD %I000/2
-	OR %M000/0
-	AND! %I000/5
-	ST %M000/0
+	LD %I000/2		; B1
+	OR %M000/0		; B1ON
+	AND! %I000/5	; F1
+	ST %M000/0		; B1ON
+
+;L1 = B1ON
+	LD %M000/0		; B1ON
+	ST %Q001/3		; L1
 
 ;B2ON = (B2 or B2ON) and not F2
-	LD %I000/3
-	OR %M000/1
-	AND! %I000/6
-	ST %M000/1
+	LD %I000/3		; B2
+	OR %M000/1		; B2ON
+	AND! %I000/6	; F2
+	ST %M000/1		; B2ON
+
+;L2 = B2ON
+	LD %M000/1		; B2ON
+	ST %Q001/4		; L2
 
 ;B3ON = (B3 or B3ON) and not F3
-	LD %I000/4
-	OR %M000/2
-	AND! %I000/7
-	ST %M000/2
+	LD %I000/4		; B3
+	OR %M000/2		; B3ON
+	AND! %I000/7	; F3
+	ST %M000/2		; B3ON
 
+;L3 = B3ON
+	LD %M000/2		; B3ON
+	ST %Q001/5		; L3
+	
 ; Entrada no modo programacao
 	
-	LD %I001/2
-	STN %X000/0 ; CONTROL.0.0 = IN.0.4
+;	LD %I001/0
+;	STN %X000/0 ; CONTROL.0.0 = IN.0.4
 	END
 
