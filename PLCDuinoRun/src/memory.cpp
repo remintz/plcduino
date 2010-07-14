@@ -31,8 +31,7 @@ unsigned char *getPMem(int addr) {
 
 void setMemBit(int addr, int bit, int val) {
 	val = val & 0x0001;
-//	if (isDebugOn()) {
-	if (true) {
+	if (isDebugOn()) {
 		Serial.print("setMemBit(");
 		Serial.print(addr,DEC);
 		Serial.print(",");

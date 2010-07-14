@@ -5,21 +5,35 @@
 #include "ilcode.h"
 #include "nvmem.h"
 #include "Messenger.h"
+#include "timer.h"
+
+#define	TIMEOUT_PROGRAM_MODE	10 // seconds
 
 void programMode() {
 	Messenger msg = Messenger();
 	BOOL modoProgramacao = true;
 	BOOL carregando = false;
+	BOOL comingFromBoot = true;
 	unsigned char c;
 	unsigned int i;
 	unsigned int addr1 = 0;
 	unsigned int addr2 = 0;
+	int oldTime, newTime, deltaTime;
 
 	//--- prompt
 	Serial.print(">");
+	oldTime = getTimer();
 	while (modoProgramacao) {
 		//--- aguarda caracteres pela serial
-		while (!Serial.available());
+		while (!Serial.available()) {
+			if (comingFromBoot) {
+				newTime = getTimer();
+				deltaTime = diffTimer(oldTime);
+				if (deltaTime > TIMEOUT_PROGRAM_MODE)
+					return;
+			}
+		}
+		comingFromBoot = false;
 		c = Serial.read();
 		Serial.print(c);
 		msg.process(c);

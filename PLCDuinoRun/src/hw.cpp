@@ -1,17 +1,8 @@
 #include <WProgram.h>
 #include "util.h"
 #include "nvmem.h"
-#define LEDPIN	13    // LED connected to digital pin 13
-
-#define WDT_LED_CICLE	2000
-
-int wdtLed;
-
-//WORD lastInput;
-//WORD lastOutput;
 
 void initHw() {
-	Serial.println("initHw");
 	WORD ioMask;
 	WORD ioConfig;
 	WORD ioNeg;
@@ -20,7 +11,6 @@ void initHw() {
 	ioMask = getIOMask();
 	ioConfig = getIOConfig();
 	ioNeg = getIONeg();
-	Serial.println("Config:");
 	for (i = 0; i < 16; i++) {
 		Serial.print(i, DEC);
 		if (ioMask & 0x01) {
@@ -28,11 +18,9 @@ void initHw() {
 				pinMode(i, INPUT);
 				//--- ativa resistor pull-up interno
 				digitalWrite(i, HIGH);
-				Serial.print('I');
 			}
 			else {
 				pinMode(i, OUTPUT);
-				Serial.print('O');
 			}
 			if (ioNeg & 0x01) {
 				Serial.print('N');
@@ -41,11 +29,7 @@ void initHw() {
 		ioMask = ioMask >> 1;
 		ioConfig = ioConfig >> 1;
 		ioNeg = ioNeg >> 1;
-		Serial.println();
 	}
-	wdtLed = WDT_LED_CICLE;
-}
-void kickWDT() {
 }
 
 void readInputs(unsigned char *p_Memory) {
