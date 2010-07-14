@@ -225,7 +225,6 @@ void ilRunForever() {
 	initMem();
 	oldTime = getTimer();
 	while (true) {
-		kickWDT();
 		readInputs(getPMem(MEM_OFFSET_IN));
 		if (ilRun()) {
 			Serial.println("Aborted.");
