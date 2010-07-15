@@ -2,7 +2,7 @@
 #include "util.h"
 #include "nvmem.h"
 
-void initHw() {
+void displayHwConfig() {
 	WORD ioMask;
 	WORD ioConfig;
 	WORD ioNeg;
@@ -15,6 +15,35 @@ void initHw() {
 		Serial.print(i, DEC);
 		if (ioMask & 0x01) {
 			if (ioConfig & 0x01) {
+				Serial.print('I');
+			}
+			else {
+				Serial.print('O');
+			}
+			if (ioNeg & 0x01) {
+				Serial.print('N');
+			}
+		}
+		ioMask = ioMask >> 1;
+		ioConfig = ioConfig >> 1;
+		ioNeg = ioNeg >> 1;
+		Serial.println();
+	}
+}
+
+void initHw() {
+	WORD ioMask;
+	WORD ioConfig;
+	WORD ioNeg;
+	int i;
+
+	ioMask = getIOMask();
+	ioConfig = getIOConfig();
+	ioNeg = getIONeg();
+	for (i = 0; i < 16; i++) {
+//		Serial.print(i, DEC);
+		if (ioMask & 0x01) {
+			if (ioConfig & 0x01) {
 				pinMode(i, INPUT);
 				//--- ativa resistor pull-up interno
 				digitalWrite(i, HIGH);
@@ -23,7 +52,7 @@ void initHw() {
 				pinMode(i, OUTPUT);
 			}
 			if (ioNeg & 0x01) {
-				Serial.print('N');
+//				Serial.print('N');
 			}
 		}
 		ioMask = ioMask >> 1;

@@ -11,6 +11,6 @@
 void initHw();
 void readInputs(unsigned char *p_Memory);
 void writeOutputs(unsigned char *p_Memory);
-void kickWDT();
+void displayHwConfig();
 
 #endif /* HW_H_ */
