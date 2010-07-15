@@ -51,11 +51,11 @@ void programMode() {
 				Serial.println();
 			}
 			else {
+				Serial.println();
 				switch (msg.readChar()) {
 				case 'i':
 					//--- le e exibe o valor de um pino de entrada
 					//--- parametros: numero do pino
-					Serial.println();
 					addr1 = msg.readInt();
 					for (i = 0; i < 100; i++) {
 						addr2 = digitalRead(addr1);
@@ -82,7 +82,6 @@ void programMode() {
 					//--- parametros: endereco
 					addr1 = msg.readInt();
 					carregando = true;
-					Serial.println();
 					Serial.print("Loading @");
 					Serial.print(addr1, DEC);
 					Serial.println(". Enter 256 to stop.");
@@ -93,7 +92,6 @@ void programMode() {
 					//--- parametros: endereco inicial, endereco final
 					addr1 = msg.readInt();
 					addr2 = msg.readInt();
-					Serial.println();
 					Serial.print("DUMP ");
 					Serial.println(addr1,DEC);
 					for (unsigned int i = addr1; i <= addr2; i++) {
@@ -153,6 +151,7 @@ void programMode() {
 						break;
 					case 4:
 						initHw();
+						displayHwConfig();
 						break;
 					}
 					break;
